@@ -167,3 +167,29 @@ def test_end_to_end_mocked(tmp_path, monkeypatch):
 
 async def _no_sleep(*_a, **_k):
     return None
+
+
+# ---------- ad-hoc single query ----------
+
+def test_adhoc_query_mocked(tmp_path, monkeypatch):
+    from wsx import adhoc
+    monkeypatch.setenv("PERPLEXITY_API_KEY", "test")
+
+    def handler(request):
+        return httpx.Response(200, json={"id": "x", "results": [
+            {"title": "SOR102 Phase 1 safety", "url": "https://www.clinicaltrials.gov/s", "snippet": "AEs ...",
+             "date": "2026-02-01"},
+            {"title": "Unrelated", "url": "https://example.com/u", "snippet": "x", "date": None},
+        ]})
+
+    cfg = config.build_config("pplx_fast")
+    rec, j, m = adhoc.run_query(cfg, "SOR102 safety", ["SOR-102"], transport=httpx.MockTransport(handler),
+                                out_dir=tmp_path)
+    assert rec["ok"] and rec["n_results"] == 2 and rec["cost_usd"] == 0.001
+    assert [r["anchor_hit"] for r in rec["results"]] == [True, False]
+    assert rec["results"][0]["category"] == "registry"
+    assert json.loads(j.read_text(encoding="utf-8"))["query"] == "SOR102 safety"
+    assert "### 1. SOR102 Phase 1 safety" in m.read_text(encoding="utf-8")
+    text = adhoc.render(rec)
+    assert "[anchor]" in text and "anchor hits=1/2" in text
+    print(text)

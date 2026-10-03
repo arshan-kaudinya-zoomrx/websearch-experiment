@@ -74,6 +74,7 @@ trade_news:
   - reuters.com
   - bloomberg.com
 databases:
+  - larvol.com
   - synapse.patsnap.com
   - patsnap.com
   - drugbank.com

@@ -81,6 +81,30 @@ def cmd_run(args) -> None:
     execute(cfg)
 
 
+def cmd_query(args) -> None:
+    from .adhoc import render, run_query
+    from .config import build_config
+    from .dataset import load_questions
+    cfg = build_config(args.config, args.set)
+    queries = list(args.text or [])
+    anchors = args.anchor or []
+    if args.row:  # take queries/anchors from a dataset row
+        row = next((q for q in load_questions() if q["id"] == args.row.lower()), None)
+        if not row:
+            raise SystemExit(f"No row {args.row}")
+        if args.objective:
+            queries = [row["objective"]]
+        elif not queries:
+            queries = row["queries"]
+        anchors = anchors or row["anchors"]
+    if not queries:
+        raise SystemExit('Give a query: wsx query "text"  (or --row q005)')
+    query = queries[0] if len(queries) == 1 else queries
+    rec, j, m = run_query(cfg, query, anchors)
+    print(json.dumps(rec, indent=2, ensure_ascii=False) if args.json else render(rec))
+    print(f"Saved {j}\n      {m}")
+
+
 def cmd_matrix(args) -> None:
     from .compare import compare_runs
     from .config import build_config
@@ -159,6 +183,16 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--dry-run", action="store_true", help="show plan + cost, call nothing")
     _add_selection_args(p)
     p.set_defaults(func=cmd_run)
+
+    p = sub.add_parser("query", help="run ONE ad-hoc search, print it, save to outputs/queries/")
+    p.add_argument("text", nargs="*", help="query text; several quoted strings = one multi-query request")
+    p.add_argument("-c", "--config", default="pplx_web_default", help="config for provider/params (default: pplx_web_default)")
+    p.add_argument("--set", action="append", default=[], metavar="KEY=VALUE", help="e.g. --set params.search_type=fast")
+    p.add_argument("--anchor", action="append", help="term to flag in results (repeatable)")
+    p.add_argument("--row", help="use a dataset row's queries (batched) and anchors, e.g. q005")
+    p.add_argument("--objective", action="store_true", help="with --row: search the objective text instead")
+    p.add_argument("--json", action="store_true", help="print the full JSON record instead of the readable view")
+    p.set_defaults(func=cmd_query)
 
     p = sub.add_parser("matrix", help="run several configs x modes, then compare + report")
     p.add_argument("-c", "--config", action="append", required=True, help="repeatable")

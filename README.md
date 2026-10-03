@@ -13,6 +13,7 @@ On OneDrive, `uv` may warn about hardlinks. Running `set UV_LINK_MODE=copy` (or 
 
 ## Quickstart
 ```bash
+uv run wsx query "SOR102 safety adverse events"         # one search, readable output, saved to outputs/queries/
 uv run wsx prepare --show                               # CSV -> data/questions.jsonl, print anchors
 uv run wsx run -c pplx_web_default --rows 1-5 --dry-run # plan + cost, no API calls
 uv run wsx run -c pplx_web_default --rows 1-5           # real run -> outputs/runs/<run_id>/
@@ -22,6 +23,7 @@ uv run wsx matrix -c pplx_web_default -c pplx_fast --modes queries,objective,bat
 ## Commands
 | command | what it does |
 |---|---|
+| `query "text" [opts]` | Run **one** search and print readable results (rank, title, domain, source category, date, URL, snippet). Saves `outputs/queries/<ts>__<provider>-<config>__<query>.{json,md}`. Opts: `-c CFG` (default `pplx_web_default`), `--set params.search_type=fast`, `--anchor SOR102` (flags results that mention the term), `--row q005` (that row's queries as one batch, plus its anchors), `--row q005 --objective` (search the objective text), `--json`. Several quoted strings make one multi-query request. |
 | `prepare [--show]` | Parse the CSV into `data/questions.jsonl` with ids `q001…q064` and anchor terms. Run it again after editing `data/anchor_overrides.yaml`. |
 | `run -c CFG [opts]` | Run one config. Opts: `--mode queries\|objective\|batch`, `--rows 1-10\|q003,q017`, `--sample N --seed S`, `--repeat N`, `--concurrency N`, `--set key.path=value` (repeatable), `--name`, `--dry-run`. |
 | `matrix -c A -c B [--modes …]` | Run every config × mode, then compare all of them and rebuild the report. Takes the same opts as `run`. |
@@ -62,6 +64,7 @@ outputs/
     results.jsonl   one JSON object per request (schema below)
     summary.json    run metrics (+ "review" once scored)
     review.csv      top-k results per request for manual labelling
+  queries/<ts>__<provider>-<config>__<query-slug>.{json,md}   single ad-hoc searches (wsx query)
   comparisons/<ts>__<runA>__vs__<runB>.{json,md}
   report.{md,json}  leaderboard of all runs
 ```

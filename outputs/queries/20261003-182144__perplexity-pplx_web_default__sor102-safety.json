@@ -1,0 +1,133 @@
+{
+  "ts": "2026-10-03T12:51:30+00:00",
+  "provider": "perplexity",
+  "config_name": "pplx_web_default",
+  "query": "SOR102 safety",
+  "anchors": [],
+  "request": {
+    "query": "SOR102 safety",
+    "search_type": "web",
+    "max_results": 10
+  },
+  "ok": true,
+  "status": 200,
+  "error": null,
+  "latency_ms": 13986.8,
+  "n_results": 10,
+  "cost_usd": 0.005,
+  "results": [
+    {
+      "rank": 1,
+      "query_index": null,
+      "title": "Safely targeting combination TNF and IL-23 using a gut-restricted ...",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13263963/",
+      "domain": "pmc.ncbi.nlm.nih.gov",
+      "snippet": "Specifically targeting gut delivery allows for inhibition of the immune response at the level of intestinal tissue but minimizing systemic absorption with the potential implication of improved long-term safety from minimized systemic drug exposure.\n...\nOverall, SOR102 was well tolerated in both healthy participants and patients with UC, with a low incidence of treatment-emergent adverse events (TEAEs), most of which were mild to moderate in severity.\nIn part 1, TEAEs were reported in 3/24 (13%) participants receiving SOR102 compared with 2/8 (25%) receiving placebo.\nNo TEAEs were observed in part 2.\nIn part 3, at least one TEAE occurred in 7/16 (44%) patients treated with SOR102 and 3/6 (50%) patients receiving placebo.\nOnly 1 severe TEAE was reported, a flare of UC requiring hospitalization, which was not considered related to the study drug.\nImportantly, no clinically meaningful effects of SOR102 were observed on electrocardiograms, vital signs, physical examination findings, or safety laboratory parameters at any dose or dosing frequency evaluated.\nThis trial also critically demonstrated proof-of-concept for the therapeutic target and delivery mechanism: from a PK perspective, no detectable serum or urine concentrations of SOR102, SOR102-TNF, or SOR102-IL-23 were identified across study parts, suggesting minimal systemic drug exposure.\nIn contrast, fecal concentrations of SOR102-TNF and SOR102-IL-23 could be more than 1,000-fold higher than those of intact SOR102, suggesting that the molecule was effectively cleaved post-oral administration and pharmacodynamically active monomers could be detected throughout the gastrointestinal (GI) tract.\n...\nIn this early-phase study, anti-drug antibodies (ADAs) were detected in 2/8 (25%) subjects in part 2 and 6/16 (38%) patients in part 3.\nNotably, some ADA positivity was present at baseline, and most treatment-emergent ADA titers were low.\n...\nIn summary, SOR102 demonstrated a favorable safety and tolerability profile across early-phase evaluation, with no signal of systemic toxicity or immunogenicity.\nThe lack of detectable systemic exposure, together with substantial fecal recovery of cytokine-bound fragments and demonstrable modulation of mucosal inflammatory mediators, supports a gut-restricted mechanism with convincing evidence of local tissue engagement.\n...\nTo date, no major safety concerns have emerged; however, immunogenicity and the long-term consequences of dual-pathway immunosuppression will require careful evaluation in ongoing and future studies (11).",
+      "date": "2026-05-28",
+      "last_updated": "2026-09-24",
+      "category": "literature"
+    },
+    {
+      "rank": 2,
+      "query_index": null,
+      "title": "SOR102 / Sorriso Pharma - Gastroenterology",
+      "url": "https://delta.larvol.com/Products/?ProductId=f4d4f2dd-16fc-4e98-b7ec-f3a34272a168",
+      "domain": "delta.larvol.com",
+      "snippet": "(PubMed, Transl Gastroenterol Hepatol)\n...\n- P1 | \"The favourable safety profile and preliminary evidence for efficacy support development of SOR102 for treatment of ulcerative colitis.\"\n...\n(UEGW 2025)\n- P1 | \"High and sustained levels of active monomers in feces confirmed SOR102 is efficiently cleaved, and activity is maintained after oral dosing in UC patients.\nLevels of SOR102 monomers in sigmoid colonic tissue increased with oral dose, with minimal systemic exposure.\n...\n| \"Safety and Tolerability: : SOR102 exhibited a favorable safety profile, with adverse events predominantly mild to moderate in severity; no new safety signals were observed....Efficacy: In the intent-to-treat (ITT) analysis, Mayo Score and modified Mayo Score clinical response were 56% and 67% in the high-dose SOR102 group compared to 17% and 33% in the placebo group, respectively....| \"The study met its primary objectives, demonstrating a favorable safety and tolerability profile.\n...\n(UEGW 2024)\n- P1 | \"SOR102 was well tolerated at all tested doses.\nSystemic exposure of SOR102 and its monomers was not observed, supporting its gut selectivity.\nLow levels of intact SOR102 and high levels of SOR102 monomers in faeces confirm that SOR102 is efficiently cleaved after oral dosing, as designed.\"\n...\n- P1 | \"Collectively these data support a low risk of systemic immunosuppression after oral SOR10 dosing in IBD patients.\nSOR10 is the first orally delivered anti-TNF/anti-IL- 3 dual-specific therapeutic and is currently in a Phase I/Ib clinical trial to assess safety pharmacokinetics and pharmacodynamics in healthy volunteers and UC patients (NCT06080048).\"",
+      "date": null,
+      "last_updated": "2026-09-24",
+      "category": "other"
+    },
+    {
+      "rank": 3,
+      "query_index": null,
+      "title": "PowerPoint-Präsentation",
+      "url": "https://sorrisopharma.com/app/uploads/UEG-2024-presentation.pdf",
+      "domain": "sorrisopharma.com",
+      "snippet": "SOR102-101 (NCT06080048) is a Phase 1, first in human study that consists of 3 parts.\nParts 1 and 2 enrolled healthy subjects (HS) age 18-55 years and evaluated single ascending (SAD) and multiple doses (MD) of SOR102, respectively.\n...\nSOR102 is Safe and Well-Tolerated\nNo safety or tolerability concerns noted at single doses up to 3,645mg or multiple doses of 1,215mg BID\n-No serious adverse events\n-No clinically significant laboratory, ECG, vitals, or physical exam findings\n-No subjects discontinued \nPart 1: One TEAE considered related to study drug (Cohort #1)\nPart 2: No adverse events\nCohort / Dose\n...\nC1 / 135mg\nDiarrhea\n~17 hours\nMild\nProbably related\n...\nModerate\n...\nFlatulence\n...\nHeadache\n~4 hours\nMild\nNot related\n...\nCatheter site pain\n...\nModerate\n...\nSystemic Exposure Of SOR102 And Its Monomers Was Not \nObserved; Low-Level ADA Signal in 3 of 40 Samples Tested \n...\nNo detectable levels of SOR102 or monomers in serum in Parts 1 and 2\n...\nMost samples negative for ADA \n...\n•\nSOR102 was well tolerated at all tested doses.\n•\nSystemic exposure of SOR102 and its monomers was not observed, supporting its gut selectivity.\n•\nLow levels of intact SOR102 and high levels of active SOR102 monomers in faeces confirm that SOR102 is efficiently cleaved and maintains activity after oral dosing, as designed.\n...\nLow-level ADA positive signal observed in 2 subjects",
+      "date": null,
+      "last_updated": "2025-05-11",
+      "category": "other"
+    },
+    {
+      "rank": 4,
+      "query_index": null,
+      "title": "Oral Administration of SOR102 Delivers Anti-TNF/IL-23 ...",
+      "url": "https://sorrisopharma.com/app/uploads/UEG-Week-2025-Poster-v4.pdf",
+      "domain": "sorrisopharma.com",
+      "snippet": "Reasons for discontinuation: worsening of \nUC (n=2), study schedule non-compliance \n(n=2) and consent withdrawal (n=1).\n...\nNo clinically significant changes in safety\nlaboratory \nparameters, \ndose-limiting \ntoxicities, \nor \nevents \nsuggestive \nof \npronounced immunosuppression\n•\nAll but one TEAE were mild to moderate\n•\n1 severe and serious TEAE of worsening \nUC requiring hospitalization was not \nconsidered related to treatment.\nThis\nTEAE occurred during follow-up in a \nSOR102 BID patient\n...\nSOR102 was safe and well tolerated.\n...\nSOR102 BID demonstrated strong and consistent activity across multiple clinical and tissue PD endpoints in patients with UC.\n...\nHigh and sustained levels of active monomers in feces confirmed\nSOR102 is efficiently cleaved by trypsin and cytokine-binding activity is maintained after oral dosing in patients with UC.\n...\nMost titers were low (≤1:240) and not associated with safety or clinical response5",
+      "date": null,
+      "last_updated": "2026-02-25",
+      "category": "other"
+    },
+    {
+      "rank": 5,
+      "query_index": null,
+      "title": "Safety and pharmacokinetics of SOR102, an oral bispecific ...",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/41242336/",
+      "domain": "pubmed.ncbi.nlm.nih.gov",
+      "snippet": "# Safety and pharmacokinetics of SOR102, an oral bispecific inhibitor of TNF and interleukin-23 in healthy participants and patients with ulcerative colitis: a first-in-human, double-blind, randomised, placebo-controlled, phase 1 trial\n...\n** SOR102 is an oral bispecific antibody comprised of single domain antibodies targeting TNF and interleukin (IL)-23p19.\nWe aimed to assess the safety, pharmacokinetics, clinical, and biological activity of SOR102 in healthy participants and in patients with active ulcerative colitis.\n...\n** This phase 1 first-in-human, double-blind, randomised, placebo-controlled, trial was done in the UK, Ukraine, and Georgia in clinical research centres.\n...\nIn part 3, patients with mildly-to-severely active ulcerative colitis were randomly assigned (1:1:1) to once-daily or twice-daily SOR102 or placebo for 42 days.\nThe primary objective was to evaluate the safety and tolerability of SOR102.\n...\n** From Oct 9, 2023, to Oct 16, 2024, 157 participants were assessed for eligibility, of whom 93 were excluded and 64 were randomly assigned to either SOR102 (n=48) or placebo (n=16) across all three parts of the study.\n...\nIn part 1, treatment-emergent adverse events (TEAEs) occurred in three (13%) of 24 participants who received SOR102 (two in the SOR102 135 mg dose group and one in the SOR102 405 mg dose group; mild diarrhoea and moderate dysmenorrhoea both in a single participant in the SOR102 135 mg group and mild flatulence in a second participant in same group;\nmild dysmenorrhoea in one participant in the SOR102 405 mg group) compared with two (25%) of eight participants who received placebo (mild catheter site pain; mild headache).\nOnly the TEAE of mild diarrhoea was deemed treatment-related.\nNo TEAEs occurred in part 2.\nIn part 3, at least one TEAE occurred in seven (44%) of 16 patients who received SOR102 (five in the SOR102 810 mg twice-daily dose group and two in the SOR102 810 mg once-daily dose group) and three (50%) of six patients who received placebo.\nTwo patients in the SOR102 twice-daily group had TEAEs of worsening of ulcerative colitis (one of which was severe [the only serious TEAE reported] but not deemed treatment related), leading to study discontinuation.\nAll other TEAEs were mild to moderate in nature.\nNo clinically significant effect of SOR102 on electrocardiogram, vital signs, physical examination, or laboratory parameters was observed at any dose, or frequency of dosing, in any part of the study, and no deaths occurred.\n...\n** The favourable safety profile and preliminary evidence for efficacy support development of SOR102 for treatment of ulcerative colitis.",
+      "date": null,
+      "last_updated": "2026-09-19",
+      "category": "literature"
+    },
+    {
+      "rank": 6,
+      "query_index": null,
+      "title": "PHASE 1B STUDY OF SOR102, A NOVEL, ORALLY ...",
+      "url": "https://eposters.ddw.org/ddw/2025/ddw-2025/4155984/vipul.jairath.phase.1b.study.of.sor102.a.novel.orally.delivered.bispecific.html?f=menu=6*browseby=8*sortby=2*ce_id=2855*ot_id=31400*marker=5698",
+      "domain": "eposters.ddw.org",
+      "snippet": "TEAEs were reported in 57%, 29%, and 50% of patients receiving SOR102 810mg BID, SOR102 810mg QD, or placebo, respectively (Table 1).\nMost were mild-to-moderate in severity.\nOne AE (SOR102 810mg BID arm) was considered possibly related to SOR102 (abdominal pain of mild severity).\nOne serious AE of worsening of UC that led to hospitalization was observed in the SOR102 810mg BID arm.\n...\n**Conclusion**: SOR102 was safe and well tolerated.\nEfficacy across multiple endpoints was observed in the SOR102 BID arm compared to the QD and placebo arms, despite the relatively short duration of treatment.\n...\n**Conclusion**: SOR102 was safe and well tolerated.\nEfficacy across multiple endpoints was observed in the SOR102 BID arm compared to the QD and placebo arms, despite the relatively short duration of treatment.",
+      "date": "2025-03-31",
+      "last_updated": "2026-09-24",
+      "category": "other"
+    },
+    {
+      "rank": 7,
+      "query_index": null,
+      "title": "PowerPoint Presentation",
+      "url": "https://sorrisopharma.com/app/uploads/DDW-2025-poster.pdf",
+      "domain": "sorrisopharma.com",
+      "snippet": "Phase 1b randomized, double-blind, placebo-controlled study in patients with mild to severe UC.\n...\nSOR102 was safe and well tolerated.\n...\nIn most samples tested, there were no detectable levels of SOR102 or monomers in serum\n...\nADA titers were low in most patients and not associated with safety or decreased clinical response.\n...\nEfficacy across multiple endpoints was observed in the SOR102 BID arm compared to QD and placebo, despite the short treatment duration.\n...\nMost ADA titers were low (<1:240) and not associated with safety or clinical response\n...\nTreatment emergent adverse events (TEAEs) were reported in 57%, \n29%, and 50% of patients receiving SOR102 810mg BID, SOR102 \n810mg QD, or placebo, respectively (Table 2).\nMost were mild-to-\nmoderate in severity.\nOne AE (SOR102 810mg BID arm) was considered possibly related to SOR102 (abdominal pain of mild severity).\nOne unrelated serious AE of worsening of UC that led to hospitalization was observed in the SOR102 810mg BID arm.",
+      "date": null,
+      "last_updated": "2025-05-11",
+      "category": "other"
+    },
+    {
+      "rank": 8,
+      "query_index": null,
+      "title": "SOR102, an anti-TNFα/anti-IL-23 antibody in",
+      "url": "https://sorrisopharma.com/app/uploads/DDW-2024-poster.pdf",
+      "domain": "sorrisopharma.com",
+      "snippet": "SOR102, SOR102-TNF, and SOR102-IL-23 are rapidly cleared from the serum in\ncynomolgus monkeys.\n...\nHowever, the approved therapeutics require systemic administration \nby intravenous (IV) or subcutaneous injection, subjecting patients to increased risk of systemic immunosuppression.\n...\nSOR102 is a novel orally delivered biologic that neutralizes TNF and IL-23 activity within\nGI tissue, limiting systemic exposure and immunosuppression, in a single molecule for manufacturing, storage, and dosing.\n...\nSystemic exposure after oral dosing of SOR102 is expected to be low and transient since SOR102 monomers have a short elimination half-life from serum after single or multiple IV doses to cynomolgus monkeys (NHPs).\nUrine recovery data suggest that SOR102 monomers are predominantly cleared by the renal\nroute.\nCollectively, \nthese \ndata \nsupport \na \nlow \nrisk\nof \nsystemic \nimmunosuppression after oral SOR102 dosing in IBD patients.\nSOR102 is the first orally delivered anti-TNF/anti-IL-23 dual-specific therapeutic and is currently in a Phase I/Ib clinical trial to assess safety, pharmacokinetics and pharmacodynamics in healthy volunteers and UC patients (NCT06080048).\n...\nSOR102 and its monomer arms show rapid serum clearance, suggesting low risk of systemic exposure in IBD patients.\nSOR102 is currently in a Phase I/Ib clinical trial (NCT06080048) to assess safety in \nhumans.",
+      "date": null,
+      "last_updated": "2026-07-08",
+      "category": "other"
+    },
+    {
+      "rank": 9,
+      "query_index": null,
+      "title": "SOR-102 - Drug Targets, Indications, Patents",
+      "url": "https://synapse.patsnap.com/drug/c4ffffc6839e4416b41bd1cd9d28f2d9",
+      "domain": "synapse.patsnap.com",
+      "snippet": "SOR102-101 is a Phase 1, 3-part, randomised, double-blind, placebo-controlled, FIH study to determine the safety, tolerability, and PK of single, ascending oral doses (SAD) of SOR102 (Part 1) and multiple oral doses (Part 2) of SOR102 in healthy adult participants, and to assess the safety, tolerability, PK, and biological activity of multiple oral doses of SOR102 in patients with mild to severe UC (Part 3).\n...\nIn part 1, treatment-emergent adverse events (TEAEs) occurred in three (13%) of 24 participants who received SOR102 (two in the SOR102 135 mg dose group and one in the SOR102 405 mg dose group; mild diarrhoea and moderate dysmenorrhoea both in a single participant in the SOR102 135 mg group and mild flatulence in a second participant in same group;\nmild dysmenorrhoea in one participant in the SOR102 405 mg group) compared with two (25%) of eight participants who received placebo (mild catheter site pain; mild headache).\nOnly the TEAE of mild diarrhoea was deemed treatment-related.\nNo TEAEs occurred in part 2.\nIn part 3, at least one TEAE occurred in seven (44%) of 16 patients who received SOR102 (five in the SOR102 810 mg twice-daily dose group and two in the SOR102 810 mg once-daily dose group) and three (50%) of six patients who received placebo.\nTwo patients in the SOR102 twice-daily group had TEAEs of worsening of ulcerative colitis (one of which was severe [the only serious TEAE reported] but not deemed treatment related), leading to study discontinuation.\nAll other TEAEs were mild to moderate in nature.\nNo clinically significant effect of SOR102 on electrocardiogram, vital signs, physical examination, or laboratory parameters was observed at any dose, or frequency of dosing, in any part of the study, and no deaths occurred.\n...\nThe favourable safety profile and preliminary evidence for efficacy support development of SOR102 for treatment of ulcerative colitis.\n...\n“The data demonstrate safety and tolerability, but also clinically meaningful impact on rigorous endpoints with minimal systemic exposure.\n...\n• Safety and Tolerability: SOR102 was dosed orally and was safe and well-tolerated in both healthy participants and UC patients.\nNo unexpected adverse events were observed.",
+      "date": "2025-01-17",
+      "last_updated": "2026-09-25",
+      "category": "databases"
+    },
+    {
+      "rank": 10,
+      "query_index": null,
+      "title": "Sorriso Announces Data Publication in Lancet Gastroenterology ...",
+      "url": "https://www.einpresswire.com/article/866424926/sorriso-announces-data-publication-in-lancet-gastroenterology-hepatology-and-presentation-of-new-findings-at-ueg-2025",
+      "domain": "einpresswire.com",
+      "snippet": "*First-in-class Oral Dual Acting Therapy SOR102 Demonstrates Promising Safety, Pharmacokinetics, and Efficacy in Ulcerative Colitis Patients*\n...\nThe article, titled “Safety and Pharmacokinetics of SOR102, an Oral Bispecific Inhibitor of Tumour Necrosis Factor-α and Interleukin-23 in Healthy Participants and Patients with Ulcerative Colitis: A First-in-Human, Randomised, Double-Blind, Placebo\n-Controlled, Phase 1 Trial” outlines the promising safety profile, efficacy, and pharmacokinetics of SOR102, a novel oral bispecific inhibitor that simultaneously targets tumor necrosis factor-α (TNF) and interleukin-23 (IL-23), two key mediators in the inflammatory cascade of ulcerative colitis.\nThe randomized, double-blind, placebo-controlled trial enrolled 42 healthy participants assigned to single ascending doses and multiple doses of SOR102 or placebo, as well as 22 patients with ulcerative colitis who were randomized to receive SOR102 one- or twice-daily, or placebo for 6 weeks.\nThe study assessed safety, tolerability, pharmacokinetics, pharmacodynamics, immunogenicity and preliminary efficacy.\n...\n“The results published in The Lancet GI and the new data presented at UEG Week highlight a compelling case for SOR102 as a safe and effective dual acting oral treatment for ulcerative colitis,” said Dr. Jairath.\n“The data demonstrate safety and tolerability, but also clinically meaningful impact on rigorous endpoints with minimal systemic exposure.\n...\n• Safety and Tolerability: SOR102 was dosed orally and was safe and well-tolerated in both healthy participants and UC patients.\nNo unexpected adverse events were observed.\n• Pharmacokinetics: Serum and urine analysis showed mostly unquantifiable concentrations of SOR102, SOR102-TNF, or SOR102-IL-23 in both healthy participants and patients with UC at any dose of SOR102, supporting limited systemic exposure to SOR102.\nHigh and sustained levels of active SOR102 monomers were detected in fecal samples, confirming efficient cleavage by trypsin and maintenance of cytokine-binding activity throughout the GI tract after oral dosing.\n...\nCollectively, these results showed that oral SOR102, administered twice daily for six weeks, demonstrated strong and consistent activity across multiple clinical and pharmacodynamic endpoints.",
+      "date": "2025-11-13",
+      "last_updated": "2026-03-18",
+      "category": "other"
+    }
+  ],
+  "raw": {
+    "id": "e59349c0-edb6-4618-992d-442504a71b48"
+  }
+}
