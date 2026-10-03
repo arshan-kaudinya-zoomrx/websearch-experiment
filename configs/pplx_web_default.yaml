@@ -1,0 +1,34 @@
+# Baseline: Perplexity Search, standard ("web") search. Other configs `extends:` this one.
+name: pplx_web_default
+provider: perplexity
+mode: queries                 # queries | objective | batch
+
+selection:
+  rows: all                   # "all" | "1-10" | "1-5,9" | "q003,q017"
+  sample: null                # random N rows
+  seed: 42
+
+params:                       # sent to the API as-is; null/empty values are dropped
+  search_type: web            # web (standard) | fast
+  max_results: 10             # 1-20
+  search_context_size: null   # low | medium | high (API default: high)
+  max_tokens_per_page: null
+  max_tokens: null
+  search_domain_filter: []    # <=20 domains; prefix "-" to exclude
+  search_recency_filter: null # hour | day | week | month | year
+  search_after_date_filter: null   # MM/DD/YYYY
+  search_before_date_filter: null
+  country: null               # ISO 3166-1 alpha-2
+  search_language_filter: []  # ISO 639-1
+
+run:
+  concurrency: 4
+  timeout_s: 30
+  retries: 2
+  repeat: 1
+  max_cost_usd: 10.0
+  save_raw: false
+  review_top_k: 5
+
+pricing:
+  per_1k_requests: {web: 5.0, fast: 1.0, default: 5.0}   # USD; Perplexity list price

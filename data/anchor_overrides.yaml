@@ -1,0 +1,7 @@
+# Manual anchor corrections, keyed by question id (see data/questions.jsonl).
+# A result "hits" if ANY listed term appears (case/punctuation-insensitive) in its
+# title, URL or snippet. Re-run `uv run wsx prepare` after editing, then
+# `uv run wsx summarize <run_dir> --refresh-anchors` to rescore existing runs.
+q003: ["RpoB"]                 # no asset name in queries; mechanism is the best proxy
+q038: ["ZE980277"]             # auto picked up "KRAS"/"G12D", which match almost any page
+q056: ["MNPS"]                 # "Asset" is not distinctive

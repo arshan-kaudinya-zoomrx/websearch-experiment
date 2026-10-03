@@ -1,0 +1,5 @@
+# More results per request: does recall improve enough to justify longer payloads?
+extends: pplx_web_default.yaml
+name: pplx_maxres20
+params:
+  max_results: 20

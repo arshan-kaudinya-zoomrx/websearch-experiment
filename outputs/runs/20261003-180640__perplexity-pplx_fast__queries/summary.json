@@ -1,0 +1,91 @@
+{
+  "run_id": "20261003-180640__perplexity-pplx_fast__queries",
+  "config_name": "pplx_fast",
+  "provider": "perplexity",
+  "mode": "queries",
+  "params": {
+    "search_type": "fast",
+    "max_results": 10,
+    "search_context_size": null,
+    "max_tokens_per_page": null,
+    "max_tokens": null,
+    "search_domain_filter": [],
+    "search_recency_filter": null,
+    "search_after_date_filter": null,
+    "search_before_date_filter": null,
+    "country": null,
+    "search_language_filter": []
+  },
+  "repeat": 1,
+  "started_at": "2026-10-03T12:36:40+00:00",
+  "duration_s": 386.1,
+  "n_requests": 210,
+  "n_ok": 210,
+  "n_cases": 210,
+  "n_rows": 64,
+  "error_rate": 0.0,
+  "errors": {},
+  "zero_result_rate": 0.0,
+  "latency_ms": {
+    "p50": 2059.2,
+    "p90": 13683.5,
+    "p95": 18062.6,
+    "max": 29834.4,
+    "mean": 4638.5,
+    "repeat_sd_mean": null
+  },
+  "results_per_request_mean": 9.9,
+  "snippet_chars_mean": 898.0,
+  "anchor": {
+    "hit_at_1": 0.6381,
+    "hit_at_3": 0.7238,
+    "hit_at_k": 0.8143,
+    "hit_fraction_mean": 0.5278
+  },
+  "objective_coverage": 0.8594,
+  "rows_without_hit": [
+    "q003",
+    "q013",
+    "q020",
+    "q022",
+    "q028",
+    "q032",
+    "q038",
+    "q048",
+    "q051"
+  ],
+  "source_mix": {
+    "other": 0.5411,
+    "literature": 0.3228,
+    "databases": 0.063,
+    "registry": 0.026,
+    "trade_news": 0.0164,
+    "regulatory": 0.0159,
+    "company_press": 0.0149
+  },
+  "unique_domains": 551,
+  "top_domains": {
+    "pmc.ncbi.nlm.nih.gov": 283,
+    "synapse.patsnap.com": 106,
+    "sciencedirect.com": 60,
+    "academic.oup.com": 58,
+    "pubmed.ncbi.nlm.nih.gov": 52,
+    "delta.larvol.com": 43,
+    "frontiersin.org": 41,
+    "onlinelibrary.wiley.com": 32,
+    "ncbi.nlm.nih.gov": 27,
+    "clinicaltrials.gov": 27,
+    "www1.hkexnews.hk": 24,
+    "trial.medpath.com": 22,
+    "link.springer.com": 22,
+    "cdn.clinicaltrials.gov": 21,
+    "mdpi.com": 21
+  },
+  "freshness": {
+    "dated_share": 1.0,
+    "median_age_days": 333,
+    "within_12m_share": 0.5411
+  },
+  "cost_usd": 0.21,
+  "price_per_1k_requests": 1.0
+}

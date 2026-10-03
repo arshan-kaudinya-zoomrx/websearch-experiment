@@ -1,0 +1,86 @@
+# Domain -> source category, used for the "source_mix" metric.
+# A result domain matches an entry if equal to it or a subdomain of it. First match wins.
+registry:
+  - clinicaltrials.gov
+  - clinicaltrialsregister.eu
+  - euclinicaltrials.eu
+  - ctri.nic.in
+  - chictr.org.cn
+  - anzctr.org.au
+  - isrctn.com
+  - jrct.niph.go.jp
+  - trialsearch.who.int
+  - cde.org.cn
+literature:
+  - pubmed.ncbi.nlm.nih.gov
+  - pmc.ncbi.nlm.nih.gov
+  - ncbi.nlm.nih.gov
+  - europepmc.org
+  - biorxiv.org
+  - medrxiv.org
+  - aacrjournals.org
+  - ascopubs.org
+  - nature.com
+  - sciencedirect.com
+  - cell.com
+  - thelancet.com
+  - nejm.org
+  - onlinelibrary.wiley.com
+  - springer.com
+  - link.springer.com
+  - academic.oup.com
+  - tandfonline.com
+  - frontiersin.org
+  - mdpi.com
+  - jci.org
+  - ashpublications.org
+  - gastrojournal.org
+  - researchgate.net
+  - doi.org
+regulatory:
+  - fda.gov
+  - ema.europa.eu
+  - sec.gov
+  - nmpa.gov.cn
+  - pmda.go.jp
+  - gov.uk
+company_press:
+  - prnewswire.com
+  - businesswire.com
+  - globenewswire.com
+  - accessnewswire.com
+  - newswire.ca
+  - eurekalert.org
+  - q4cdn.com
+  - investors.com
+trade_news:
+  - fiercebiotech.com
+  - fiercepharma.com
+  - endpts.com
+  - biospace.com
+  - statnews.com
+  - pharmaceutical-technology.com
+  - clinicaltrialsarena.com
+  - firstwordpharma.com
+  - evaluate.com
+  - pharmaphorum.com
+  - biopharmadive.com
+  - genengnews.com
+  - healio.com
+  - medscape.com
+  - targetedonc.com
+  - onclive.com
+  - cancernetwork.com
+  - reuters.com
+  - bloomberg.com
+databases:
+  - synapse.patsnap.com
+  - patsnap.com
+  - drugbank.com
+  - go.drugbank.com
+  - adisinsight.springer.com
+  - pharmacompass.com
+  - globaldata.com
+  - citeline.com
+  - drugs.com
+  - wikipedia.org

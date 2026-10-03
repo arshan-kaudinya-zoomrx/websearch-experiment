@@ -1,0 +1,5 @@
+# Lower-latency, cheaper tier ($1/1K).
+extends: pplx_web_default.yaml
+name: pplx_fast
+params:
+  search_type: fast

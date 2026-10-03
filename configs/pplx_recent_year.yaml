@@ -1,0 +1,5 @@
+# Only results from the last year: pipeline/status questions favour fresh sources.
+extends: pplx_web_default.yaml
+name: pplx_recent_year
+params:
+  search_recency_filter: year

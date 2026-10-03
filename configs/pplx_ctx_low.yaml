@@ -1,0 +1,5 @@
+# Smaller extracted context per result (shorter snippets, possibly faster).
+extends: pplx_web_default.yaml
+name: pplx_ctx_low
+params:
+  search_context_size: low

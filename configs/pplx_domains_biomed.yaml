@@ -1,0 +1,25 @@
+# Allow-list of biomedical / regulatory / press-wire / trade sources (max 20).
+extends: pplx_web_default.yaml
+name: pplx_domains_biomed
+params:
+  search_domain_filter:
+    - clinicaltrials.gov
+    - pubmed.ncbi.nlm.nih.gov
+    - ncbi.nlm.nih.gov
+    - aacrjournals.org
+    - ascopubs.org
+    - biorxiv.org
+    - medrxiv.org
+    - nature.com
+    - sciencedirect.com
+    - onlinelibrary.wiley.com
+    - prnewswire.com
+    - businesswire.com
+    - globenewswire.com
+    - fiercebiotech.com
+    - endpts.com
+    - biospace.com
+    - sec.gov
+    - fda.gov
+    - ema.europa.eu
+    - eurekalert.org
