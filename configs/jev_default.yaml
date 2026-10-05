@@ -1,0 +1,34 @@
+# Jev filter (TypeSafe System One): score each fetched link against the row's objective,
+# keep the best, abstain if none pass. Used by `wsx filter`, `wsx rescore` and `wsx query --jev`.
+# Docs: https://docs.typesafe.ai/api.md  Override any key: --set select.keep_threshold=0.6
+name: jev_default
+filter: jev
+model: jev-latest
+granularity: per_link         # per_link: one Noul call per link, fired in parallel | per_list: one call per list
+max_snippet_chars: 1500       # snippet truncation sent to Jev (tokens + latency)
+
+question:                     # the Noul question asked about every link
+  instructions: >-
+    The state holds a research objective and a web search result (title, url, date, snippet).
+    Does this result contain evidence that helps answer the objective?
+  criteria:
+    "true": >-
+      The result is about the same drug, asset or company as the objective and states facts
+      (data, results, trial status, dates, deals) that help answer it.
+    "false": >-
+      The result is about a different asset or company, is only generally on-topic,
+      or contains no facts that help answer the objective.
+
+select:                       # applied to stored scores; re-tune offline with `wsx rescore`
+  keep_threshold: 0.5         # keep links with score >= this
+  max_keep: 5                 # at most this many links passed on to Luna
+
+run:
+  concurrency: 2              # source requests (link lists) filtered at once
+  link_concurrency: 20        # Jev HTTP calls in flight at once (API limit: 80 req/s)
+  timeout_s: 15
+  retries: 2
+  max_cost_usd: 1.0           # abort if the estimate is higher
+
+pricing:                      # https://docs.typesafe.ai/models.md (output tokens are free)
+  per_1m_input_tokens: 0.042

@@ -1,0 +1,41 @@
+# Jev v2: two atomic questions per link + gates in code (TypeSafe guidance: one judgement per
+# question, thresholds in code, short structured state). Why each link is dropped is recorded
+# as `reason` (low_on_target / low_evidence / max_keep) and listed in the filter's inspect.md.
+#
+# State sent per link: {objective, target, result: {title, url, date, snippet}}.
+# `target` is built in code from the row's anchors; for competitor objectives (target.competitor_pattern)
+# it becomes "drugs competing with <asset> ...", so pages about rival drugs count as on-target.
+extends: jev_default.yaml
+name: jev_v2
+send_target: true
+
+questions:
+  on_target:                  # wrong-entity filter: name collisions (DXP-007 = card game, MNPs = nanoparticles)
+    type: noul
+    instructions: Is `result` about `target`?
+    criteria:
+      "true": >-
+        `result` discusses `target` itself: the same drug, asset or code name (including its synonyms
+        or its sponsor's program), or, when `target` describes competing drugs, at least one such drug.
+      "false": >-
+        `result` is about something that only shares a name or acronym with `target` (for example a game,
+        product, gene or chemical term), or covers the disease or field without discussing `target`.
+  evidence:                   # graded, so partial evidence (e.g. "preclinical" for an approval question) survives
+    type: score
+    instructions: How much does `result` state about what `objective` asks, for `target`?
+    criteria:
+      - Nothing about what `objective` asks; an empty, navigational or unrelated page.
+      - Only general background on the disease, drug class or field, without specific facts about `target`.
+      - >-
+        Specific facts about `target` that partly answer `objective`, such as its development stage, sponsor,
+        mechanism with experimental results, or results in a related model, indication or combination.
+      - >-
+        The specific facts `objective` asks for about `target`, such as the requested results, numbers,
+        dates, trial design or approval status; for approval or launch questions, a clear statement
+        of its current development stage.
+
+select:
+  gates:                      # a link is kept only if every answer is >= its gate (answers are in [0, 1])
+    on_target: 0.6             # swept offline on run 175621: 0.5 lets generic pages through, 0.7 doubles false abstains
+    evidence: 0.5             # score is normalized: 0.5 = halfway between "background" and "partial facts"
+  max_keep: 5                 # ranking = on_target x evidence

@@ -9,15 +9,15 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from . import ROOT, RUNS_DIR
+from . import FILTERS_DIR, ROOT, RUNS_DIR
 
 
-def _run_dir(value: str) -> Path:
+def _run_dir(value: str, base: Path = RUNS_DIR) -> Path:
     """Accept a full path, a run folder name, or a unique prefix/substring of one."""
     p = Path(value)
     if p.is_dir():
         return p
-    matches = [d for d in RUNS_DIR.iterdir() if d.is_dir() and value in d.name] if RUNS_DIR.exists() else []
+    matches = [d for d in base.iterdir() if d.is_dir() and value in d.name] if base.exists() else []
     if len(matches) == 1:
         return matches[0]
     if not matches:
@@ -26,16 +26,16 @@ def _run_dir(value: str) -> Path:
                      "\n  ".join(m.name for m in matches))
 
 
-def _resolve_runs(values: list[str]) -> list[Path]:
+def _resolve_runs(values: list[str], base: Path = RUNS_DIR) -> list[Path]:
     out = []
     for v in values:
         if v == "latest":
-            runs = sorted(d for d in RUNS_DIR.iterdir() if d.is_dir())
+            runs = sorted(d for d in base.iterdir() if d.is_dir()) if base.exists() else []
             if not runs:
-                raise SystemExit("No runs yet.")
+                raise SystemExit(f"Nothing in {base} yet.")
             out.append(runs[-1])
         else:
-            out.append(_run_dir(v))
+            out.append(_run_dir(v, base))
     return out
 
 
@@ -88,6 +88,7 @@ def cmd_query(args) -> None:
     cfg = build_config(args.config, args.set)
     queries = list(args.text or [])
     anchors = args.anchor or []
+    objective = args.objective_text
     if args.row:  # take queries/anchors from a dataset row
         row = next((q for q in load_questions() if q["id"] == args.row.lower()), None)
         if not row:
@@ -97,10 +98,15 @@ def cmd_query(args) -> None:
         elif not queries:
             queries = row["queries"]
         anchors = anchors or row["anchors"]
+        objective = objective or row["objective"]
     if not queries:
         raise SystemExit('Give a query: wsx query "text"  (or --row q005)')
     query = queries[0] if len(queries) == 1 else queries
-    rec, j, m = run_query(cfg, query, anchors)
+    jev_cfg = None
+    if args.jev:
+        from .filtering import build_filter_config
+        jev_cfg = build_filter_config(args.jev, args.jev_set)
+    rec, j, m = run_query(cfg, query, anchors, jev_cfg=jev_cfg, objective=objective)
     print(json.dumps(rec, indent=2, ensure_ascii=False) if args.json else render(rec))
     print(f"Saved {j}\n      {m}")
 
@@ -127,6 +133,30 @@ def cmd_matrix(args) -> None:
         print(f"Comparison: {m}")
     build_report()
     print("Report: outputs/report.md")
+
+
+def cmd_filter(args) -> None:
+    from .filtering import apply_filter, build_filter_config, plan_filter
+    cfg = build_filter_config(args.config, args.set)
+    sources = _resolve_runs(args.runs)
+    if args.dry_run:
+        total = 0.0
+        for d in sources:
+            p = plan_filter(d, cfg, args.rows)
+            total += p["est_cost_usd"]
+            print(f"  {d.name}: {p['n_requests']} link lists, {p['n_links']} links, {p['n_calls']} Jev calls, "
+                  f"~{p['est_input_tokens']:,} input tokens, est ${p['est_cost_usd']}")
+        print(f"Filter {cfg['name']} ({cfg['granularity']}): {len(sources)} source run(s), est ${round(total, 4)}. "
+              f"No calls made (dry run).")
+        return
+    for d in sources:
+        apply_filter(d, cfg, args.rows)
+
+
+def cmd_rescore(args) -> None:
+    from .filtering import rescore
+    for d in _resolve_runs(args.filters, FILTERS_DIR):
+        rescore(d, args.set)
 
 
 def cmd_summarize(args) -> None:
@@ -192,6 +222,11 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--row", help="use a dataset row's queries (batched) and anchors, e.g. q005")
     p.add_argument("--objective", action="store_true", help="with --row: search the objective text instead")
     p.add_argument("--json", action="store_true", help="print the full JSON record instead of the readable view")
+    p.add_argument("--jev", nargs="?", const="jev_default", metavar="CFG",
+                   help="also run the Jev filter on the links (default config: jev_default)")
+    p.add_argument("--jev-set", action="append", default=[], metavar="KEY=VALUE",
+                   help="override a Jev config key, e.g. --jev-set select.keep_threshold=0.6")
+    p.add_argument("--objective-text", help="objective Jev scores links against (default: the query, or the row's objective)")
     p.set_defaults(func=cmd_query)
 
     p = sub.add_parser("matrix", help="run several configs x modes, then compare + report")
@@ -200,6 +235,21 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--dry-run", action="store_true")
     _add_selection_args(p)
     p.set_defaults(func=cmd_matrix)
+
+    p = sub.add_parser("filter", help="run the Jev filter over saved run(s) -> outputs/filters/ (no search calls)")
+    p.add_argument("runs", nargs="+", help="source run folder(s), name substring, or 'latest'")
+    p.add_argument("-c", "--config", default="jev_default", help="filter config (default: jev_default)")
+    p.add_argument("--set", action="append", default=[], metavar="KEY=VALUE",
+                   help="e.g. --set granularity=per_list --set select.keep_threshold=0.6")
+    p.add_argument("--rows", help='only these rows: "1-10", "q003,q017"')
+    p.add_argument("--dry-run", action="store_true", help="show links, tokens and cost, call nothing")
+    p.set_defaults(func=cmd_filter)
+
+    p = sub.add_parser("rescore", help="re-apply selection to stored Jev scores (free) -> new filter folder")
+    p.add_argument("filters", nargs="+", help="filter folder(s) in outputs/filters, substring, or 'latest'")
+    p.add_argument("--set", action="append", default=[], metavar="KEY=VALUE",
+                   help="e.g. --set select.keep_threshold=0.7 --set select.max_keep=3")
+    p.set_defaults(func=cmd_rescore)
 
     p = sub.add_parser("summarize", help="recompute summary.json for run(s)")
     p.add_argument("runs", nargs="+", help="run folder, name substring, or 'latest'")

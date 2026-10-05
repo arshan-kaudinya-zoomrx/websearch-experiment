@@ -193,3 +193,167 @@ def test_adhoc_query_mocked(tmp_path, monkeypatch):
     text = adhoc.render(rec)
     assert "[anchor]" in text and "anchor hits=1/2" in text
     print(text)
+
+
+# ---------- Jev filter (mocked TypeSafe API) ----------
+
+def _jev_answer(question, link):
+    good = "ABC" in link["title"]
+    if question["type"] == "score":  # 4 levels -> top level for good links
+        return {"type": "score", "score": 3.0 if good else 0.6}
+    return {"type": "noul", "noul": 0.9 if good else 0.1}
+
+
+def _jev_handler(calls, fail_first=False):
+    """Links whose title mentions ABC score high on every question. Handles per_link and per_list."""
+    def handler(request):
+        body = json.loads(request.content)
+        calls.append(body)
+        if fail_first and len(calls) == 1:
+            return httpx.Response(529, json={"error": "overloaded"})
+        st = body["state"]
+        if "result" in st:
+            answers = {qid: _jev_answer(q, st["result"]) for qid, q in body["questions"].items()}
+        else:
+            answers = {qid: _jev_answer(q, st["results"][qid.split("__")[0]])
+                       for qid, q in body["questions"].items()}
+        return httpx.Response(200, json={"model": "jev-1.13.0", "answers": answers,
+                                         "usage": {"input_tokens": 100, "output_tokens": 2}})
+    return handler
+
+
+def test_jev_request_bodies():
+    from wsx.filtering import build_filter_config
+    from wsx.filters import get_filter
+    res = [{"title": "t1", "url": "u1", "snippet": "x" * 3000}, {"title": "t2", "url": "u2", "snippet": "s"}]
+    per_link = get_filter(build_filter_config("jev_default")).build_bodies("obj", res, "ABC-1")
+    assert len(per_link) == 2 and per_link[0]["questions"]["evidence"]["type"] == "noul"
+    assert len(per_link[0]["state"]["result"]["snippet"]) == 1500 and "target" not in per_link[0]["state"]
+    # regression: YAML `true:` keys parse as booleans; the configured criteria text must reach Jev
+    assert per_link[0]["questions"]["evidence"]["criteria"]["true"].startswith("The result is about")
+    crit = get_filter(build_filter_config(None, ["question={instructions: q, criteria: {true: kept, false: dropped}}"]))
+    assert crit.build_bodies("o", res[:1])[0]["questions"]["evidence"]["criteria"] == {"true": "kept", "false": "dropped"}
+    per_list = get_filter(build_filter_config("jev_per_list")).build_bodies("obj", res)
+    assert len(per_list) == 1 and set(per_list[0]["questions"]) == {"r1__evidence", "r2__evidence"}
+    v2 = get_filter(build_filter_config("jev_v2")).build_bodies("obj", res, "ABC-1")
+    assert v2[0]["state"]["target"] == "ABC-1"
+    assert v2[0]["questions"]["evidence"]["type"] == "score"
+    assert len(v2[0]["questions"]["evidence"]["criteria"]) == 4
+
+
+def test_target_for_competitor_objectives():
+    from wsx.filtering import FILTER_DEFAULTS, target_of
+    assert target_of("ABC-1 safety in UC", ["ABC-1", "ABC-1"], FILTER_DEFAULTS) == "ABC-1"
+    assert target_of("UC competing agents in the same class as ABC-1", ["ABC-1"], FILTER_DEFAULTS).startswith(
+        "drugs competing with ABC-1")
+
+
+def test_select_gates_reasons_and_abstain():
+    from wsx.filtering import candidates, select
+    c = candidates([{"url": "a"}, {"url": "b"}, {"url": "a"}, {"url": "c"}, {"url": "d"}])
+    assert [x["url"] for x in c] == ["a", "b", "c", "d"]
+    answers = [{"on": 0.2, "ev": 0.9}, {"on": 0.9, "ev": 0.9}, None, {"on": 0.9, "ev": 0.3}]
+    for x, a in zip(c, answers):
+        x["answers"], x["jev_score"] = a, (a["on"] * a["ev"] if a else None)
+    ranked = select(c, {"gates": {"on": 0.5, "ev": 0.5}, "max_keep": 5})
+    assert {x["url"]: x["reason"] for x in ranked} == {"a": "low_on", "b": "kept", "c": "error", "d": "low_ev"}
+    assert ranked[0]["url"] == "b"
+    assert not any(x["kept"] for x in select(c, {"keep_threshold": 0.95, "max_keep": 5}))
+
+
+@pytest.mark.parametrize("cfg_name", ["jev_default", "jev_per_list", "jev_v2"])
+def test_apply_filter_mocked(tmp_path, monkeypatch, cfg_name):
+    from wsx import filtering
+    from wsx.filters import jev
+    monkeypatch.setenv("TYPESAFE_API_KEY", "test")
+    monkeypatch.setattr(jev.asyncio, "sleep", _no_sleep)
+    src = tmp_path / "20260101-000000__perplexity-x__queries"
+    src.mkdir()
+    recs = [
+        {**_rec("q001-1", "q001", [_res(1, "other"), _res(2, "ABC-1 data"), _res(3, "more")]), "mode": "queries"},
+        {**_rec("q002-1", "q002", [_res(1, "nothing", "example.com")]), "mode": "queries"},
+        {**_rec("q003-1", "q003", [_res(1, "rival drug")]), "mode": "queries",
+         "objective": "UC competing agents in the same class as ABC-1"},
+    ]
+    (src / "results.jsonl").write_text("".join(json.dumps(r) + "\n" for r in recs), encoding="utf-8")
+    cfg = filtering.build_filter_config(cfg_name)
+    out = filtering.apply_filter(src, cfg, cli_args=[], out_root=tmp_path / "filters",
+                                 transport=httpx.MockTransport(_jev_handler([], fail_first=True)))
+    assert {p.name for p in out.iterdir()} == {"filter.json", "results.jsonl", "summary.json", "inspect.md"}
+    s = json.loads((out / "summary.json").read_text(encoding="utf-8"))
+    assert s["error_rate"] == 0 and s["n_scored"] == 3
+    q = s["quality"]
+    assert q["competitor_lists_excluded"] == 1 and q["rows_judged"] == 2
+    assert q["hit_at_1"] == {"without_jev": 0.0, "with_jev": 0.5, "rerank_only": 0.5}
+    assert q["anchor_precision"] == {"without_jev": 0.25, "with_jev": 1.0}
+    assert s["selection"]["abstain_rate"] == round(2 / 3, 4) and q["abstain_no_anchor_hits"] == 0.5
+    assert q["anchor_recall_retained"] == 1.0 and q["rows_lost"] == []
+    assert s["timing_ms"]["total"]["p50"] >= s["timing_ms"]["search"]["p50"]
+    assert s["calls_per_request_mean"] == (1.0 if cfg_name == "jev_per_list" else round(5 / 3, 2))
+    assert "q001-1" in (out / "inspect.md").read_text(encoding="utf-8")
+    if cfg_name == "jev_v2":
+        assert s["selection"]["reasons"]["kept"] == 1 and "low_on_target" in s["selection"]["reasons"]
+
+    # offline threshold sweep: nothing passes 0.95 -> all abstain
+    key = "select.gates.on_target=0.95" if cfg_name == "jev_v2" else "select.keep_threshold=0.95"
+    r2 = filtering.rescore(out, [key], out_root=tmp_path / "filters")
+    s2 = json.loads((r2 / "summary.json").read_text(encoding="utf-8"))
+    assert s2["selection"]["abstain_rate"] == 1.0 and s2["rescored_from"] == out.name
+
+
+def test_rescore_v1_folder_without_answers(tmp_path):
+    from wsx import filtering
+    d = tmp_path / "20260101-000000__jev-jev_default__on__src"
+    d.mkdir()
+    cfg = filtering.build_filter_config("jev_default")
+    (d / "filter.json").write_text(json.dumps({"filter_id": d.name, "source_run_id": "src", "config": cfg}))
+    rec = {**_rec("q001-1", "q001", []), "search_latency_ms": 1000.0, "jev_latency_ms": 300.0, "total_ms": 1300.0,
+           "calls": 1, "usage": {"input_tokens": 1, "output_tokens": 0}, "cost_usd": 0.0, "n_candidates": 1,
+           "results": [{**_res(1, "ABC-1 x"), "orig_rank": 1, "jev_rank": 1, "jev_score": 0.4, "kept": False}]}
+    (d / "results.jsonl").write_text(json.dumps(rec) + "\n")
+    out = filtering.rescore(d, ["select.keep_threshold=0.3"], out_root=tmp_path)
+    s = json.loads((out / "summary.json").read_text(encoding="utf-8"))
+    assert s["selection"]["kept_mean"] == 1.0 and "jev_default-t0.3-k5" in out.name
+
+
+def test_adhoc_query_with_jev(tmp_path, monkeypatch):
+    from wsx import adhoc, filtering
+    monkeypatch.setenv("PERPLEXITY_API_KEY", "test")
+    monkeypatch.setenv("TYPESAFE_API_KEY", "test")
+    jev_handler = _jev_handler([])
+
+    def handler(request):
+        if "typesafe" in request.url.host:
+            return jev_handler(request)
+        return httpx.Response(200, json={"results": [
+            {"title": "Unrelated", "url": "https://example.com/u", "snippet": "x"},
+            {"title": "ABC-1 Phase 1 safety", "url": "https://clinicaltrials.gov/s", "snippet": "AEs"},
+        ]})
+
+    rec, j, m = adhoc.run_query(config.build_config("pplx_fast"), "ABC-1 safety", ["ABC-1"],
+                                transport=httpx.MockTransport(handler), out_dir=tmp_path,
+                                jev_cfg=filtering.build_filter_config("jev_v2"))
+    assert rec["jev"]["n_kept"] == 1 and rec["jev"]["objective"] == "ABC-1 safety"
+    assert rec["jev"]["target"] == "ABC-1"
+    assert rec["results"][0]["title"].startswith("ABC-1") and rec["results"][0]["orig_rank"] == 2
+    text = adhoc.render(rec)
+    assert "Timing:   search" in text and "KEPT" in text and "dropped: low_on_target" in text
+
+
+def test_filter_aborts_on_auth_error(tmp_path, monkeypatch):
+    from wsx import filtering
+    monkeypatch.setenv("TYPESAFE_API_KEY", "bad")
+    src = tmp_path / "20260101-000000__perplexity-x__queries"
+    src.mkdir()
+    recs = [{**_rec(f"q00{i}-1", f"q00{i}", [_res(1, "x")]), "mode": "queries"} for i in range(1, 6)]
+    (src / "results.jsonl").write_text("".join(json.dumps(r) + "\n" for r in recs), encoding="utf-8")
+    calls = []
+
+    def handler(request):
+        calls.append(1)
+        return httpx.Response(401, json={"detail": "bad key"})
+
+    cfg = filtering.build_filter_config("jev_v2", ["run.concurrency=1"])
+    with pytest.raises(SystemExit, match="auth failed"):
+        filtering.apply_filter(src, cfg, cli_args=[], out_root=tmp_path / "f", transport=httpx.MockTransport(handler))
+    assert len(calls) < 5

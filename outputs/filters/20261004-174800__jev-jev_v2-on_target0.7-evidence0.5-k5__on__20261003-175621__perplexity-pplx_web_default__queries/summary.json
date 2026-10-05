@@ -1,0 +1,124 @@
+{
+  "filter_id": "20261004-174800__jev-jev_v2-on_target0.7-evidence0.5-k5__on__20261003-175621__perplexity-pplx_web_default__queries",
+  "source_run_id": "20261003-175621__perplexity-pplx_web_default__queries",
+  "source_mode": "queries",
+  "source_params": {
+    "search_type": "web",
+    "max_results": 10,
+    "search_context_size": null,
+    "max_tokens_per_page": null,
+    "max_tokens": null,
+    "search_domain_filter": [],
+    "search_recency_filter": null,
+    "search_after_date_filter": null,
+    "search_before_date_filter": null,
+    "country": null,
+    "search_language_filter": []
+  },
+  "filter": "jev",
+  "config_name": "jev_v2-on_target0.7-evidence0.5-k5",
+  "model": "jev-latest",
+  "granularity": "per_link",
+  "select": {
+    "keep_threshold": 0.5,
+    "max_keep": 5,
+    "gates": {
+      "on_target": 0.7,
+      "evidence": 0.5
+    }
+  },
+  "rescored_from": "20261004-174606__jev-jev_v2__on__20261003-175621__perplexity-pplx_web_default__queries",
+  "started_at": "2026-10-04T12:18:00+00:00",
+  "duration_s": 41.4,
+  "n_requests": 210,
+  "n_scored": 210,
+  "error_rate": 0.0,
+  "errors": {},
+  "timing_ms": {
+    "search": {
+      "p50": 2660.0,
+      "p95": 19287.0,
+      "mean": 4987.2
+    },
+    "jev": {
+      "p50": 371.5,
+      "p95": 514.7,
+      "mean": 390.4
+    },
+    "total": {
+      "p50": 3003.6,
+      "p95": 19707.7,
+      "mean": 5377.6
+    },
+    "jev_share_of_total_p50": 0.1237
+  },
+  "calls_per_request_mean": 9.92,
+  "input_tokens_per_request_mean": 10747.0,
+  "selection": {
+    "candidates_mean": 9.92,
+    "kept_mean": 3.1,
+    "abstain_rate": 0.181,
+    "score_p10": 0.0,
+    "score_p50": 0.3,
+    "score_p90": 0.8,
+    "answer_means": {
+      "on_target": 0.59,
+      "evidence": 0.465
+    },
+    "reasons": {
+      "low_on_target": 1002,
+      "kept": 651,
+      "max_keep": 281,
+      "low_evidence": 150
+    }
+  },
+  "quality": {
+    "lists_judged": 135,
+    "rows_judged": 42,
+    "competitor_lists_excluded": 75,
+    "anchor_precision": {
+      "without_jev": 0.4567,
+      "with_jev": 0.9416
+    },
+    "hit_at_1": {
+      "without_jev": 0.6296,
+      "with_jev": 0.7407,
+      "rerank_only": 0.7407
+    },
+    "objective_coverage": {
+      "without_jev": 0.881,
+      "with_jev": 0.8095
+    },
+    "anchor_recall_retained": 0.6062,
+    "abstain_no_anchor_hits": 0.1778,
+    "abstain_with_anchor_hits": 0.0296,
+    "kept_without_anchor_hits": 0.0222,
+    "rows_lost": [
+      "q016",
+      "q033",
+      "q056"
+    ]
+  },
+  "source_mix": {
+    "without_jev": {
+      "other": 0.5182,
+      "literature": 0.3273,
+      "databases": 0.0806,
+      "registry": 0.025,
+      "regulatory": 0.0197,
+      "trade_news": 0.0149,
+      "company_press": 0.0144
+    },
+    "with_jev": {
+      "other": 0.4962,
+      "literature": 0.3118,
+      "databases": 0.126,
+      "company_press": 0.0323,
+      "trade_news": 0.0138,
+      "registry": 0.0123,
+      "regulatory": 0.0077
+    }
+  },
+  "cost_usd": 0.0948,
+  "cost_per_1k_requests": 0.4513
+}

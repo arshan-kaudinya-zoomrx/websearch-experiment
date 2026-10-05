@@ -29,3 +29,10 @@ Candidates from the vendor comparison: Linkup (fast), Brave (LLM Context), Paral
 5. Compare it on the same rows: `uv run wsx matrix -c pplx_web_default -c linkup_fast --modes queries`.
 
 Every metric, the review sheet and comparisons work on the normalized results, so nothing else changes.
+
+## Adding a filter / reranker (alongside Jev)
+Filters work the same way, in `src/wsx/filters/`. Subclass `Filter` from `base.py` and implement:
+- `score(client, objective, results)`: returns a `FilterResponse` with one score from 0 to 1 per link.
+- `estimate_input_tokens()`: used by `--dry-run`.
+
+Register the class in `filters/__init__.py`, then add a `configs/<name>.yaml` with `filter: <name>`. Selection, metrics, `rescore` and the report then work unchanged.

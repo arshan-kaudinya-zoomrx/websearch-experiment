@@ -23,6 +23,39 @@ How well does the web-search step retrieve evidence for our CI questions? We loo
 
 **Anchor caveat:** an anchor hit means a result is *about the asset*. It does not mean the result *answers the objective* (for example, TGI numbers for a specific model). The proxy is good for spotting retrieval failures (no page about the asset at all), and weak for judging answer quality. The manual review measures how well the two agree.
 
+## Jev filter (`wsx filter`, `outputs/filters/*/summary.json`)
+Jev (TypeSafe System One, `jev-latest`) is asked the config's questions about every link. Each answer is normalized to 0–1: a yes/no (Noul) answer is a probability, and a Score answer is its expected level divided by the top level.
+- **v1 (`jev_default`):** one question, "does this result help answer the objective?". A link is kept if it scores ≥ `keep_threshold`.
+- **v2 (`jev_v2`):** `on_target` (is it about this asset, or about a name collision?) and `evidence` (a 4-level scale). A link is kept if every answer is ≥ its `select.gates` value. Links are ranked by on_target × evidence.
+
+Links are deduped by URL (batch records merge several queries). At most `max_keep` are kept. If none pass, Jev **abstains**. Each link records a `reason`, and `inspect.md` lists every link.
+
+**Without Jev** = every fetched link in Perplexity order. **With Jev** = only the kept links, in Jev order.
+
+| metric | definition |
+|---|---|
+| `timing_ms.search/jev/total` | p50/p95/mean. `search` is **replayed** from the source run's measured latency. `jev` is the measured wall time to score one list (`per_link`: all calls in parallel). `total` = search + jev, per list. |
+| `jev_share_of_total_p50` | Jev p50 ÷ total p50. |
+| `calls_per_request_mean`, `input_tokens_per_request_mean`, `cost_usd`, `cost_per_1k_requests` | Jev load and cost, from the API's `usage` × $0.042 per 1M input tokens (output tokens are free). |
+| `selection.kept_mean / candidates_mean / abstain_rate / score_p10-p90` | How much Jev passes on to Luna, and how its scores are spread. |
+| `selection.reasons`, `selection.answer_means` | Why links were dropped (`low_on_target`, `low_evidence`, `below_threshold`, `max_keep`, `error`), and the mean answer per question. |
+| `quality.lists_judged / competitor_lists_excluded` | The anchor proxy is computed only on **non-competitor** objectives. For "competing agents …" objectives, good links name *other* drugs, so the asset-name proxy would count correct keeps as misses. |
+| `quality.anchor_precision` | Share of links that hit the anchor, over all fetched links vs over kept links. |
+| `quality.hit_at_1` | Is the first link an anchor hit: Perplexity's #1 vs Jev's first kept link (abstain counts as a miss). `rerank_only` is Jev's #1 with no threshold applied. |
+| `quality.objective_coverage` | Rows with ≥1 anchor hit, among fetched vs among kept links. `rows_lost` lists the rows Jev dropped all anchor hits for. |
+| `quality.anchor_recall_retained` | Anchor-hit links kept ÷ anchor-hit links fetched. Low means Jev throws away on-asset pages. |
+| `quality.abstain_no_anchor_hits` | Abstained on a list with no anchor hit (proxy: correct abstain). |
+| `quality.abstain_with_anchor_hits` | Abstained although on-asset links existed (proxy: possible false abstain; inspect these). |
+| `quality.kept_without_anchor_hits` | Passed links on although none mention the asset (proxy: possible false pass). |
+| `source_mix.without_jev / with_jev` | Source categories of fetched vs kept links. |
+
+**Caveats.**
+- The anchor proxy rewards links that *mention* the asset. Jev is asked a stricter question (does the link *answer* the objective?), so a lower recall on anchor hits can be correct behaviour. Spot-check `abstain_with_anchor_hits` cases.
+- `per_link` latency depends on `run.link_concurrency` and on the API's rate limits (80 req/s). With `run.concurrency` > 1, the parallel lists share that budget, so keep it low for latency tests.
+- Only `wsx query --jev` measures search + Jev live, end to end, on one query.
+- `wsx rescore` changes only the selection. Scores and timings are reused.
+- `anchor_recall_retained` is capped by `max_keep`. With about 10 links and `max_keep: 5`, at most about half the anchor links can be kept, so read it alongside `selection.reasons.max_keep`.
+
 ## Manual review (`review.csv`)
 The sheet holds the top-k results per request (default k=5, repeat 0). Reviewers fill in:
 - `relevant` = Y/N: is the result about this asset *and* useful for the objective?

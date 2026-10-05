@@ -1,0 +1,95 @@
+{
+  "filter_id": "20261004-174606__jev-jev_v2__on__20261003-175621__perplexity-pplx_web_default__queries",
+  "source_run_id": "20261003-175621__perplexity-pplx_web_default__queries",
+  "source_config": "pplx_web_default",
+  "source_mode": "queries",
+  "source_params": {
+    "search_type": "web",
+    "max_results": 10,
+    "search_context_size": null,
+    "max_tokens_per_page": null,
+    "max_tokens": null,
+    "search_domain_filter": [],
+    "search_recency_filter": null,
+    "search_after_date_filter": null,
+    "search_before_date_filter": null,
+    "country": null,
+    "search_language_filter": []
+  },
+  "dataset_sha256": "879478e895092bbb5fbc544763161b6a6b0b0ae997263fb59ae768705103c623",
+  "started_at": "2026-10-04T12:16:06+00:00",
+  "finished_at": "2026-10-04T12:16:47+00:00",
+  "config": {
+    "name": "jev_v2",
+    "filter": "jev",
+    "model": "jev-latest",
+    "granularity": "per_link",
+    "max_snippet_chars": 1500,
+    "send_target": true,
+    "target": {
+      "competitor_pattern": "competing agents|competitors?\\b|drugs approved against the target",
+      "competitor_template": "drugs competing with {name}: other agents in the same mechanistic class or for the same indication, as described in `objective`"
+    },
+    "question": {
+      "instructions": "The state holds a research objective and a web search result (title, url, date, snippet). Does this result contain evidence that helps answer the objective?",
+      "criteria": {
+        "true": "The result is about the same drug, asset or company as the objective and states facts (data, results, trial status, dates, deals) that help answer it.",
+        "false": "The result is about a different asset or company, is only generally on-topic, or contains no facts that help answer the objective."
+      }
+    },
+    "questions": {
+      "on_target": {
+        "type": "noul",
+        "instructions": "Is `result` about `target`?",
+        "criteria": {
+          "true": "`result` discusses `target` itself: the same drug, asset or code name (including its synonyms or its sponsor's program), or, when `target` describes competing drugs, at least one such drug.",
+          "false": "`result` is about something that only shares a name or acronym with `target` (for example a game, product, gene or chemical term), or covers the disease or field without discussing `target`."
+        }
+      },
+      "evidence": {
+        "type": "score",
+        "instructions": "How much does `result` state about what `objective` asks, for `target`?",
+        "criteria": [
+          "Nothing about what `objective` asks; an empty, navigational or unrelated page.",
+          "Only general background on the disease, drug class or field, without specific facts about `target`.",
+          "Specific facts about `target` that partly answer `objective`, such as its development stage, sponsor, mechanism with experimental results, or results in a related model, indication or combination.",
+          "The specific facts `objective` asks for about `target`, such as the requested results, numbers, dates, trial design or approval status; for approval or launch questions, a clear statement of its current development stage."
+        ]
+      }
+    },
+    "select": {
+      "keep_threshold": 0.5,
+      "max_keep": 5,
+      "gates": {
+        "on_target": 0.5,
+        "evidence": 0.5
+      }
+    },
+    "run": {
+      "concurrency": 2,
+      "link_concurrency": 20,
+      "timeout_s": 15,
+      "retries": 2,
+      "max_cost_usd": 1.0
+    },
+    "pricing": {
+      "per_1m_input_tokens": 0.042
+    }
+  },
+  "cli_args": [
+    "filter",
+    "175621",
+    "-c",
+    "jev_v2"
+  ],
+  "env": {
+    "wsx": "0.1.0",
+    "python": "3.12.14",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "n_requests": 210,
+  "n_links": 2084,
+  "est_input_tokens": 2761700,
+  "est_cost_usd": 0.116,
+  "duration_s": 41.4
+}

@@ -1,0 +1,4 @@
+# One Jev call per link list (one Noul question per link) instead of one call per link.
+extends: jev_default.yaml
+name: jev_per_list
+granularity: per_list

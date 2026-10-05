@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 
-from . import OUTPUT_DIR, RUNS_DIR
+from . import FILTERS_DIR, OUTPUT_DIR, RUNS_DIR
 
 COLS = [
     ("run", lambda s: f"`{s['run_id']}`"),
@@ -25,6 +25,33 @@ COLS = [
 ]
 
 
+def _ba(d: dict) -> str:
+    return f"{d['without_jev']:.0%}→{d['with_jev']:.0%}"
+
+
+FILTER_COLS = [
+    ("filter", lambda s: f"`{s['filter_id']}`"),
+    ("source", lambda s: f"{s.get('source_mode')}/{(s.get('source_params') or {}).get('search_type', '-')}"),
+    ("gran", lambda s: s["granularity"]),
+    ("select", lambda s: (" ".join(f"{g}≥{v}" for g, v in s["select"]["gates"].items())
+                          if s["select"].get("gates") else f"≥{s['select']['keep_threshold']}")
+                         + f" max {s['select']['max_keep']}"),
+    ("n", lambda s: s["n_scored"]),
+    ("err", lambda s: f"{s['error_rate']:.0%}"),
+    ("search p50", lambda s: s["timing_ms"]["search"]["p50"]),
+    ("jev p50", lambda s: s["timing_ms"]["jev"]["p50"]),
+    ("jev p95", lambda s: s["timing_ms"]["jev"]["p95"]),
+    ("total p50", lambda s: s["timing_ms"]["total"]["p50"]),
+    ("kept/list", lambda s: f"{s['selection']['kept_mean']}/{s['selection']['candidates_mean']}"),
+    ("abstain", lambda s: f"{s['selection']['abstain_rate']:.0%}"),
+    ("anchor prec", lambda s: _ba(s["quality"]["anchor_precision"])),
+    ("hit@1", lambda s: _ba(s["quality"]["hit_at_1"])),
+    ("obj cov", lambda s: _ba(s["quality"]["objective_coverage"])),
+    ("recall kept", lambda s: f"{s['quality']['anchor_recall_retained']:.0%}"),
+    ("cost $", lambda s: s["cost_usd"]),
+]
+
+
 def build_report() -> tuple[str, list[dict]]:
     summaries = []
     for path in sorted(RUNS_DIR.glob("*/summary.json")):
@@ -34,9 +61,19 @@ def build_report() -> tuple[str, list[dict]]:
              "| " + " | ".join(c for c, _ in COLS) + " |", "|" + "---|" * len(COLS)]
     for s in summaries:
         lines.append("| " + " | ".join(str(fn(s)) for _, fn in COLS) + " |")
-    md = "\n".join(lines) + "\n"
+    filters = [json.loads(p.read_text(encoding="utf-8")) for p in sorted(FILTERS_DIR.glob("*/summary.json"))]
+    if filters:
+        lines += ["", "## Jev filters", "",
+                  "Without→with Jev. Timing: search replayed from the source run + measured Jev time.", "",
+                  "| " + " | ".join(c for c, _ in FILTER_COLS) + " |", "|" + "---|" * len(FILTER_COLS)]
+        for s in filters:
+            lines.append("| " + " | ".join(str(fn(s)) for _, fn in FILTER_COLS) + " |")
+    md ="\n".join(lines) + "\n"
     OUTPUT_DIR.mkdir(exist_ok=True)
     (OUTPUT_DIR / "report.md").write_text(md, encoding="utf-8")
-    compact = [{"run_id": s["run_id"], **{c: fn(s) for c, fn in COLS[1:]}} for s in summaries]
-    (OUTPUT_DIR / "report.json").write_text(json.dumps(compact, indent=2), encoding="utf-8")
+    compact = {
+        "runs": [{"run_id": s["run_id"], **{c: fn(s) for c, fn in COLS[1:]}} for s in summaries],
+        "filters": [{"filter_id": s["filter_id"], **{c: fn(s) for c, fn in FILTER_COLS[1:]}} for s in filters],
+    }
+    (OUTPUT_DIR / "report.json").write_text(json.dumps(compact, indent=2, ensure_ascii=False), encoding="utf-8")
     return md, summaries
