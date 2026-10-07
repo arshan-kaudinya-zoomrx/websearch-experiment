@@ -1,0 +1,30 @@
+# Parallel Search, fast mode (~700 ms, $1/1K): the "Parallel Search (fast)" setup from the initial benchmark.
+# One request per row: the row objective + all sub-queries (Parallel takes both), so mode is batch.
+# Standalone (no `extends:`): Perplexity params would be merged in and Parallel rejects unknown fields.
+name: parallel_fast
+provider: parallel
+mode: batch
+
+selection:
+  rows: all
+  sample: null
+  seed: 42
+
+params:                       # sent to the API as-is; null/empty top-level values are dropped
+  mode: fast                  # turbo | fast | basic | advanced (API default: advanced)
+  max_chars_total: null       # cap on all excerpt characters (API default depends on the request)
+  advanced_settings:
+    max_results: 10           # 1-20; 10 is the price tier
+    # excerpt_settings: {max_chars_per_result: 1500}
+
+run:
+  concurrency: 4
+  timeout_s: 30
+  retries: 2
+  repeat: 1
+  max_cost_usd: 1.0
+  save_raw: false
+  review_top_k: 5
+
+pricing:
+  per_1k_requests: {turbo: 1.0, fast: 1.0, basic: 5.0, advanced: 5.0, default: 5.0}   # USD, 10 results

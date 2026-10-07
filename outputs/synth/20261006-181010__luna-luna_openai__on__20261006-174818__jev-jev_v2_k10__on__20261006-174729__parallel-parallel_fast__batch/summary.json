@@ -1,0 +1,96 @@
+{
+  "synth_id": "20261006-181010__luna-luna_openai__on__20261006-174818__jev-jev_v2_k10__on__20261006-174729__parallel-parallel_fast__batch",
+  "arm": "parallel-fast/batch + jev",
+  "source_id": "20261006-174818__jev-jev_v2_k10__on__20261006-174729__parallel-parallel_fast__batch",
+  "model": "gpt-6-luna",
+  "prompt": "enrich-v8",
+  "prompt_sha256": "19441c21a597",
+  "n_rows": 5,
+  "errors": {
+    "invalid JSON": 1
+  },
+  "answering": {
+    "answer_rate": 0.4,
+    "jev_abstain_rate": 0.0,
+    "no_links_rate": 0.0,
+    "luna_no_rate": 0.4,
+    "error_rate": 0.2,
+    "complete_rate": 0.0,
+    "confident_mean": 0.8,
+    "answer_chars_mean": 1536.0
+  },
+  "contract": {
+    "json_valid_rate": 0.8,
+    "invalid_tag_rows": 0.0,
+    "uncited_answer_rows": 0.0,
+    "url_in_answer_rows": 0.0,
+    "search_talk_rows": 0.0,
+    "nonempty_when_no_rows": 0.0,
+    "missing_empty_rows": 0.0,
+    "next_queries_subject_first": 1.0
+  },
+  "grounding": {
+    "claim_tokens_per_answer": 21.0,
+    "ungrounded_token_rate": 0.0238,
+    "answers_with_ungrounded": 0.5
+  },
+  "subject": {
+    "rows_judged": 2,
+    "names_subject": 1.0,
+    "subject_in_cited": 1.0
+  },
+  "evidence_use": {
+    "items_given_mean": 5.8,
+    "evidence_chars_mean": 11100.0,
+    "items_cited_mean": 4.5,
+    "domains_cited": 9
+  },
+  "timing_ms": {
+    "search": {
+      "p50": 1631.6,
+      "p95": 2004.7,
+      "mean": 1716.8
+    },
+    "jev": {
+      "p50": 370.4,
+      "p95": 551.4,
+      "mean": 416.7
+    },
+    "luna": {
+      "p50": 31289.9,
+      "p95": 40016.1,
+      "mean": 24193.6
+    },
+    "total": {
+      "p50": 33286.6,
+      "p95": 42027.6,
+      "mean": 26327.1
+    }
+  },
+  "luna_timing_ms_called": {
+    "p50": 20277.8,
+    "p95": 31562.9,
+    "mean": 19712.6
+  },
+  "tokens": {
+    "input_mean": 9252.0,
+    "output_mean": 2232.0
+  },
+  "cost_usd": {
+    "search": 0.005,
+    "jev": 0.0021,
+    "luna": 0.0,
+    "total": 0.0071,
+    "per_answer": 0.00142
+  },
+  "by_facet": {
+    "commercial": {
+      "n": 3,
+      "answer_rate": 0.0
+    },
+    "readout": {
+      "n": 2,
+      "answer_rate": 1.0
+    }
+  }
+}

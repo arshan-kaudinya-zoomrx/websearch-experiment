@@ -77,7 +77,7 @@ async def _run_one(provider: Provider, client: httpx.AsyncClient, case: dict, re
         attempts = 0
         while True:
             attempts += 1
-            resp = await provider.search(client, case["query"])
+            resp = await provider.search(client, case["query"], case.get("objective"))
             retryable = resp.status is None or resp.status in RETRYABLE
             if resp.ok or not retryable or attempts > retries:
                 break

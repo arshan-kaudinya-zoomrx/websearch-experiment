@@ -1,6 +1,6 @@
 # Adding a provider
 
-Candidates from the vendor comparison: Linkup (fast), Brave (LLM Context), Parallel Search, and Tavily.
+Built in: Perplexity (`perplexity.py`) and Parallel (`parallel.py`). Other candidates from the vendor comparison: Linkup (fast), Brave (LLM Context) and Tavily.
 
 1. Create `src/wsx/providers/<name>.py` with a subclass of `Provider`:
    ```python
@@ -11,7 +11,7 @@ Candidates from the vendor comparison: Linkup (fast), Brave (LLM Context), Paral
        env_key = "LINKUP_API_KEY"
        max_queries_per_request = 1          # >1 only if the API takes a list of queries
 
-       def build_request(self, query):
+       def build_request(self, query, objective=None):
            headers = {"Authorization": f"Bearer {self.api_key}"}
            return "https://api.linkup.so/v1/search", headers, {"q": query, **self.params}
 

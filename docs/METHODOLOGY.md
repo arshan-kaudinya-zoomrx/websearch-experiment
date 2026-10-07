@@ -56,6 +56,30 @@ Links are deduped by URL (batch records merge several queries). At most `max_kee
 - `wsx rescore` changes only the selection. Scores and timings are reused.
 - `anchor_recall_retained` is capped by `max_keep`. With about 10 links and `max_keep: 5`, at most about half the anchor links can be kept, so read it alongside `selection.reasons.max_keep`.
 
+## Luna answers (`wsx synth`, `outputs/synth/*/summary.json`)
+Each arm = a link source: a search run (all links, no Jev) or a Jev filter folder (kept links). Per row, Luna gets the production prompt unchanged: `build_system(facet, scope)` and `build_user(ask, question, subject, as_of, evidence)` from `data/prompts.py`.
+- **Inputs:** ASK = QUESTION = the CSV objective (the CSV has one text per row; production has a separate client ask and column question). SUBJECT = the anchors. AS OF = `as_of` (fixed). EVIDENCE = up to `evidence.max_items` links as `[E1]..` blocks (source line, title, url, date, text cut to `max_chars_per_item`): Perplexity/Parallel order without Jev, Jev order with it. This block format is assumed; production's formatter may differ.
+- **Facet:** the first `facets` pattern matching the objective picks the COLUMN CONTRACT (competing agents → commercial; approval year / timing → catalysts; in vivo, safety, trial population → readout; else core). Per-row fixes: `data/facet_overrides.yaml`.
+- **Jev abstain:** Luna is not called; the row counts as has_answer "no" (production renders "No data available"), with 0 ms Luna time.
+
+| metric | meaning |
+|---|---|
+| `answering.answer_rate` | has_answer "yes", over **all** rows of the source (failed rows included, so arms share a denominator). `answer_rate` + `jev_abstain_rate` + `no_links_rate` + `luna_no_rate` + `error_rate` = 1. |
+| `answering.complete_rate` | answered rows whose `missing` is exactly "nothing" (Luna's own completeness claim). |
+| `contract.*` | Breaches of the prompt's output rules: invalid JSON/keys, `[E#]` tags that don't exist, URLs in the answer, search-talk ("the evidence does not state…", "document index"), a non-empty answer with has_answer "no", empty `missing`; `next_queries_subject_first` = share of next queries naming the subject in their first words. |
+| `grounding.ungrounded_token_rate` | Numbers (≥2 digits), alphanumeric codes (letters+digits with no space, e.g. `SOR102`, `NCT05156125`) and mid-sentence capitalised names in answers that do not appear (normalised) anywhere in that row's evidence. A proxy for invented facts; abbreviations and month names ("TEAEs", "June") are the usual false positives. Listed per row in `answers.md`. `wsx judge-score` / re-summarising recomputes it from stored outputs. |
+| `subject.names_subject / subject_in_cited` | Non-competitor rows: the answer names an anchor / a cited item contains one. |
+| `evidence_use.*` | Items given, evidence characters, items cited per answer, distinct cited domains. |
+| `timing_ms.*` | search (replayed from the run) + jev (replayed from the filter) + luna (measured, final attempt only, like search; `luna_wall_ms` per row adds retries and backoff) = total, per row. Rows whose search/Jev failed are excluded. `luna_timing_ms_called` covers successful Luna calls only. |
+| `cost_usd.*` | search (run cost per request × requests), jev, luna (OpenAI usage × `llm.pricing`); `per_row` = total / rows; `per_answer` = total / answered rows. |
+
+## Judge (`wsx judge`, `outputs/judge/*/compare.md`)
+One call per row over all arms. The judge sees the objective, the **union** of every arm's evidence (deduped by URL, tagged `[S1]..`; each answer's `[E#]` tags are rewritten to them; when arms hold different text for one URL every distinct text is kept; the text is exactly what Luna saw, same cap), and the answers in a seeded random order labelled A, B, …. It scores each answer 1–5 on `correct` (claims supported by the cited item, right entity; empty = 5), `complete` (vs what the pool supports; empty = 1 if the pool answers the objective), `subject` (no lookalike's facts) and `useful`, and ranks the answers. Reported per arm: mean scores, mean rank, win rate, pairwise win rates, `useful` by facet.
+- **Errors are not answers:** a row where any arm errored (search/Jev failed, or the Luna call failed after retries or returned invalid JSON) is not judged and is listed in `skipped_rows`. In synth summaries these rows count in `error_rate`, never in `luna_no_rate`; `no_links_rate` (search returned nothing) is separate from `jev_abstain_rate`.
+- **Position check:** the first `position_check_rows` rows are judged again in reversed order. `same_winner` and the mean rank Spearman ρ show how much the order sways the judge.
+- **Human spot-check:** `human_review.csv` holds `human_sample` rows (round-robin over facets) in the same blind order; evidence is in `human_evidence.md`. Fill in 1–5 scores and a rank, then `wsx judge-score`: exact and ±1 agreement with the judge per score, and the rank Spearman ρ.
+- **Caveats:** the judge sees only the pooled snippets, not full pages, so "correct" means "supported by what was retrieved". By default the judge is Luna's own model; every arm is written by that model, so a self-preference applies to all arms equally, but absolute scores may run high (check with the human sheet). Judge consistency on the 2026-10-06 run: same winner in 7 of 10 reversed-order rows, rank ρ 0.84, so treat per-arm differences under about 0.2 points as noise. Report paired per-row differences with a sign test (RESEARCH §5). An arm with more evidence makes the pool bigger for everyone, which is intended: completeness is judged against everything any arm found.
+
 ## Manual review (`review.csv`)
 The sheet holds the top-k results per request (default k=5, repeat 0). Reviewers fill in:
 - `relevant` = Y/N: is the result about this asset *and* useful for the objective?

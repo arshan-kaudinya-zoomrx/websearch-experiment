@@ -1,0 +1,5 @@
+# Jev v2 feeding Luna: same questions and gates, keep up to 10 (88% of anchor links kept vs 61% at 5, precision ~95%).
+extends: jev_v2.yaml
+name: jev_v2_k10
+select:
+  max_keep: 10

@@ -1,0 +1,3 @@
+# Per-row facet/scope for Luna's prompt, when the patterns in configs/luna_openai.yaml get a row wrong.
+# facet: catalysts | commercial | readout | corporate | null (core only); scope: target | indication | organization | null
+# q033: {facet: null, scope: null}

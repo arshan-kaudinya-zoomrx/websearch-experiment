@@ -36,7 +36,7 @@ def run_query(cfg: dict, query: str | list[str], anchors: list[str] | None = Non
 
     async def go():
         async with httpx.AsyncClient(transport=transport) as client:
-            resp = await provider.search(client, query)
+            resp = await provider.search(client, query, objective)
             jev = None
             if filt and resp.ok:
                 jev = await filter_list(filt, client, objective, resp.results, jev_cfg["select"],

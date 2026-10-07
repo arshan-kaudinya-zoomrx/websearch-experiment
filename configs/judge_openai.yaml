@@ -1,0 +1,23 @@
+# Blind LLM judge over 2-4 Luna arms (`wsx judge`). Rubric: src/wsx/judge.py JUDGE_SYSTEM.
+name: judge_openai
+seed: 7                         # answer shuffle per row (stored, so the order is reproducible)
+max_chars_per_item: null        # extra cut on pool text; null = exactly the text Luna saw (luna evidence cap)
+position_check_rows: 10         # first N rows are judged twice, in reversed order (position-bias check)
+human_sample: 16                # rows exported to human_review.csv, stratified by facet
+
+llm:
+  model: null                   # null = Luna's model + pricing, read from the synth folders; or --set llm.model=<name>
+  temperature: null
+  reasoning_effort: null
+  max_completion_tokens: 16000
+  seed: null
+  timeout_s: 360
+  retries: 5
+  pricing:
+    per_1m_input_tokens: 0
+    per_1m_cached_input_tokens: null
+    per_1m_output_tokens: 0
+
+run:
+  concurrency: 4
+  max_cost_usd: 2.0

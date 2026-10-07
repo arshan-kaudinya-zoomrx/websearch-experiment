@@ -23,7 +23,7 @@ class PerplexityProvider(Provider):
     env_key = "PERPLEXITY_API_KEY"
     max_queries_per_request = 5  # multi-query: billed as one request
 
-    def build_request(self, query: str | list[str]) -> tuple[str, dict, dict]:
+    def build_request(self, query: str | list[str], objective: str | None = None) -> tuple[str, dict, dict]:
         headers = {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
         return URL, headers, {"query": query, **self.params}
 

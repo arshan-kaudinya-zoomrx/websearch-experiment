@@ -1,0 +1,86 @@
+{
+  "run_id": "20261006-174729__parallel-parallel_fast__batch",
+  "config_name": "parallel_fast",
+  "provider": "parallel",
+  "mode": "batch",
+  "params": {
+    "mode": "fast",
+    "max_chars_total": null,
+    "advanced_settings": {
+      "max_results": 10
+    }
+  },
+  "repeat": 1,
+  "started_at": "2026-10-06T12:17:29+00:00",
+  "duration_s": 19.1,
+  "n_requests": 64,
+  "n_ok": 64,
+  "n_cases": 64,
+  "n_rows": 64,
+  "error_rate": 0.0,
+  "errors": {},
+  "zero_result_rate": 0.0,
+  "latency_ms": {
+    "p50": 1057.7,
+    "p90": 1453.6,
+    "p95": 1618.2,
+    "max": 2051.4,
+    "mean": 1130.9,
+    "repeat_sd_mean": null
+  },
+  "results_per_request_mean": 10.0,
+  "snippet_chars_mean": 1641.0,
+  "anchor": {
+    "hit_at_1": 0.2812,
+    "hit_at_3": 0.5156,
+    "hit_at_k": 0.8438,
+    "hit_fraction_mean": 0.3922
+  },
+  "objective_coverage": 0.8438,
+  "rows_without_hit": [
+    "q003",
+    "q020",
+    "q022",
+    "q028",
+    "q029",
+    "q032",
+    "q036",
+    "q038",
+    "q046",
+    "q056"
+  ],
+  "source_mix": {
+    "literature": 0.4453,
+    "other": 0.3375,
+    "databases": 0.0906,
+    "registry": 0.0547,
+    "trade_news": 0.0328,
+    "company_press": 0.0281,
+    "regulatory": 0.0109
+  },
+  "unique_domains": 199,
+  "top_domains": {
+    "pmc.ncbi.nlm.nih.gov": 102,
+    "pubmed.ncbi.nlm.nih.gov": 39,
+    "synapse.patsnap.com": 35,
+    "clinicaltrials.gov": 29,
+    "researchgate.net": 25,
+    "aacrjournals.org": 19,
+    "mdpi.com": 13,
+    "sciencedirect.com": 12,
+    "delta.larvol.com": 12,
+    "biorxiv.org": 10,
+    "prnewswire.com": 10,
+    "link.springer.com": 10,
+    "frontiersin.org": 9,
+    "biospace.com": 7,
+    "nature.com": 7
+  },
+  "freshness": {
+    "dated_share": 0.2188,
+    "median_age_days": 688.0,
+    "within_12m_share": 0.35
+  },
+  "cost_usd": 0.064,
+  "price_per_1k_requests": 1.0
+}

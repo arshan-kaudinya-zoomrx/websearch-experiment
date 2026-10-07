@@ -1,0 +1,11 @@
+# Jev v3 = v2_k10 with a wider target for competitor objectives.
+# Why: on the Luna run (2026-10-06), v2 abstained on q040 (GUT-1) and q041 (DB-3Q) because the
+# competitor target "drugs competing with X" rejected pages about X itself, while Luna's
+# commercial (positioning) contract needs the subject's own profile next to its rivals; without
+# Jev, Luna answered both rows from exactly those pages.
+extends: jev_v2_k10.yaml
+name: jev_v3
+target:
+  competitor_template: >-
+    {name} itself, or drugs competing with {name}: other agents in the same mechanistic class
+    or for the same indication, as described in `objective`

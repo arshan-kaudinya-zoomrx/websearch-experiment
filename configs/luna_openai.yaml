@@ -1,0 +1,39 @@
+# Luna synthesis with the production prompt (data/prompts.py, imported by path, never copied).
+# Used by `wsx synth`. Every key can be overridden with --set, e.g. --set llm.model=<name>.
+name: luna_openai
+
+prompt:
+  path: data/prompts.py
+  version: enrich-v8            # label only; synth.json also stores the file's sha256
+
+as_of: "2026-10-06"             # AS OF date given to Luna (fixed so reruns are comparable)
+
+evidence:
+  max_items: 10                 # [E1]..[E10]; both search providers return 10 links per row
+  max_chars_per_item: 3000      # same cap for every arm (Parallel excerpts run longer than Perplexity snippets)
+
+# Column kind -> COLUMN CONTRACT in the prompt (build_system(facet, scope)). First match wins; no match = core only.
+# Per-row corrections go in data/facet_overrides.yaml. `wsx synth --dry-run` prints the table.
+facets:
+  - {pattern: "drugs approved against the target", facet: commercial, scope: target}
+  - {pattern: "competing agents|advantage over existing", facet: commercial}
+  - {pattern: "approval or market launch year|expected start date|expected timing|planned or expected", facet: catalysts}
+  - {pattern: "in vivo|tumou?r growth|animal models|safety|adverse events|trial population|patients studied", facet: readout}
+facet_overrides: data/facet_overrides.yaml
+
+llm:
+  model: gpt-6-luna            # Luna's production OpenAI model
+  temperature: null             # null = omit (reasoning models reject it); 0 for non-reasoning models
+  reasoning_effort: null        # null = omit; low | medium | high for reasoning models
+  max_completion_tokens: 16000   # 4000 cut off 3/19 answers (all reasoning, no JSON)
+  seed: null
+  timeout_s: 360
+  retries: 5
+  pricing:                      # USD per 1M tokens for llm.model; fill in to get cost numbers
+    per_1m_input_tokens: 0
+    per_1m_cached_input_tokens: null   # null = same as input
+    per_1m_output_tokens: 0
+
+run:
+  concurrency: 8
+  max_cost_usd: 2.0

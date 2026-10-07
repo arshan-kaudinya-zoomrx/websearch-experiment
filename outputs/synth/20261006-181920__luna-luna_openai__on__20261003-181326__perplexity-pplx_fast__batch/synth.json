@@ -1,0 +1,141 @@
+{
+  "synth_id": "20261006-181920__luna-luna_openai__on__20261003-181326__perplexity-pplx_fast__batch",
+  "source_id": "20261003-181326__perplexity-pplx_fast__batch",
+  "source_kind": "run",
+  "source_run_id": "20261003-181326__perplexity-pplx_fast__batch",
+  "arm": "perplexity-fast/batch",
+  "config": {
+    "name": "luna_openai",
+    "prompt": {
+      "path": "data/prompts.py",
+      "version": "enrich-v8"
+    },
+    "as_of": "2026-10-06",
+    "evidence": {
+      "max_items": 10,
+      "max_chars_per_item": 3000
+    },
+    "facet_overrides": "data/facet_overrides.yaml",
+    "facets": [
+      {
+        "pattern": "drugs approved against the target",
+        "facet": "commercial",
+        "scope": "target"
+      },
+      {
+        "pattern": "competing agents|advantage over existing",
+        "facet": "commercial"
+      },
+      {
+        "pattern": "approval or market launch year|expected start date|expected timing|planned or expected",
+        "facet": "catalysts"
+      },
+      {
+        "pattern": "in vivo|tumou?r growth|animal models|safety|adverse events|trial population|patients studied",
+        "facet": "readout"
+      }
+    ],
+    "llm": {
+      "model": "gpt-6-luna",
+      "temperature": null,
+      "reasoning_effort": null,
+      "max_completion_tokens": 16000,
+      "seed": null,
+      "timeout_s": 360,
+      "retries": 2,
+      "pricing": {
+        "per_1m_input_tokens": 0,
+        "per_1m_cached_input_tokens": null,
+        "per_1m_output_tokens": 0
+      }
+    },
+    "run": {
+      "concurrency": 8,
+      "max_cost_usd": 2.0
+    }
+  },
+  "prompt_sha256": "19441c21a597d0f9ef7b7e650b55190e52f30d7c23674722a310f5e50f9c72d2",
+  "facets": {
+    "q001": "readout",
+    "q002": "commercial",
+    "q003": "commercial",
+    "q004": "commercial",
+    "q005": "readout",
+    "q006": "commercial",
+    "q007": "commercial",
+    "q008": "commercial",
+    "q009": "commercial",
+    "q010": "commercial",
+    "q011": "commercial",
+    "q012": "catalysts",
+    "q013": "readout",
+    "q014": "readout",
+    "q015": "readout",
+    "q016": "readout",
+    "q017": "readout",
+    "q018": "readout",
+    "q019": "commercial",
+    "q020": "commercial",
+    "q021": "commercial",
+    "q022": "commercial",
+    "q023": "commercial",
+    "q024": "commercial",
+    "q025": "commercial",
+    "q026": "catalysts",
+    "q027": "readout",
+    "q028": "readout",
+    "q029": "readout",
+    "q030": "readout",
+    "q031": "readout",
+    "q032": "readout",
+    "q033": "core",
+    "q034": "catalysts",
+    "q035": "catalysts",
+    "q036": "readout",
+    "q037": "readout",
+    "q038": "commercial/target",
+    "q039": "commercial",
+    "q040": "commercial",
+    "q041": "commercial",
+    "q042": "commercial",
+    "q043": "commercial",
+    "q044": "commercial",
+    "q045": "catalysts",
+    "q046": "catalysts",
+    "q047": "catalysts",
+    "q048": "catalysts",
+    "q049": "readout",
+    "q050": "readout",
+    "q051": "readout",
+    "q052": "readout",
+    "q053": "readout",
+    "q054": "readout",
+    "q055": "readout",
+    "q056": "catalysts",
+    "q057": "catalysts",
+    "q058": "readout",
+    "q059": "readout",
+    "q060": "core",
+    "q061": "core",
+    "q062": "core",
+    "q063": "readout",
+    "q064": "readout"
+  },
+  "started_at": "2026-10-06T12:49:20+00:00",
+  "finished_at": "2026-10-06T12:52:25+00:00",
+  "n_rows": 64,
+  "n_calls": 64,
+  "est_cost_usd": 0.0,
+  "cli_args": [
+    "synth",
+    "20261003-181326",
+    "20261006-174729",
+    "20261006-174803",
+    "20261006-174818"
+  ],
+  "env": {
+    "wsx": "0.1.0",
+    "python": "3.12.14",
+    "platform": "Windows-11-10.0.26200-SP0"
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "synth_id": "20261006-180830__luna-luna_openai__on__20261006-174729__parallel-parallel_fast__batch",
+  "source_id": "20261006-174729__parallel-parallel_fast__batch",
+  "source_kind": "run",
+  "source_run_id": "20261006-174729__parallel-parallel_fast__batch",
+  "arm": "parallel-fast/batch",
+  "config": {
+    "name": "luna_openai",
+    "prompt": {
+      "path": "data/prompts.py",
+      "version": "enrich-v8"
+    },
+    "as_of": "2026-10-06",
+    "evidence": {
+      "max_items": 10,
+      "max_chars_per_item": 3000
+    },
+    "facet_overrides": "data/facet_overrides.yaml",
+    "facets": [
+      {
+        "pattern": "drugs approved against the target",
+        "facet": "commercial",
+        "scope": "target"
+      },
+      {
+        "pattern": "competing agents|advantage over existing",
+        "facet": "commercial"
+      },
+      {
+        "pattern": "approval or market launch year|expected start date|expected timing|planned or expected",
+        "facet": "catalysts"
+      },
+      {
+        "pattern": "in vivo|tumou?r growth|animal models|safety|adverse events|trial population|patients studied",
+        "facet": "readout"
+      }
+    ],
+    "llm": {
+      "model": "gpt-6-luna",
+      "temperature": null,
+      "reasoning_effort": null,
+      "max_completion_tokens": 4000,
+      "seed": null,
+      "timeout_s": 120,
+      "retries": 2,
+      "pricing": {
+        "per_1m_input_tokens": 0,
+        "per_1m_cached_input_tokens": null,
+        "per_1m_output_tokens": 0
+      }
+    },
+    "run": {
+      "concurrency": 4,
+      "max_cost_usd": 2.0
+    }
+  },
+  "prompt_sha256": "19441c21a597d0f9ef7b7e650b55190e52f30d7c23674722a310f5e50f9c72d2",
+  "facets": {
+    "q001": "readout",
+    "q002": "commercial",
+    "q003": "commercial",
+    "q004": "commercial",
+    "q005": "readout"
+  },
+  "started_at": "2026-10-06T12:38:30+00:00",
+  "finished_at": "2026-10-06T12:39:30+00:00",
+  "n_rows": 5,
+  "n_calls": 5,
+  "est_cost_usd": 0.0,
+  "cli_args": [
+    "synth",
+    "20261003-181326",
+    "20261006-174729",
+    "20261006-174803",
+    "20261006-174818",
+    "--rows",
+    "1-5"
+  ],
+  "env": {
+    "wsx": "0.1.0",
+    "python": "3.12.14",
+    "platform": "Windows-11-10.0.26200-SP0"
+  }
+}

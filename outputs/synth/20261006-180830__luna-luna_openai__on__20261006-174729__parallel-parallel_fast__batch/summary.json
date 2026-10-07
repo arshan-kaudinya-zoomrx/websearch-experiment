@@ -1,0 +1,96 @@
+{
+  "synth_id": "20261006-180830__luna-luna_openai__on__20261006-174729__parallel-parallel_fast__batch",
+  "arm": "parallel-fast/batch",
+  "source_id": "20261006-174729__parallel-parallel_fast__batch",
+  "model": "gpt-6-luna",
+  "prompt": "enrich-v8",
+  "prompt_sha256": "19441c21a597",
+  "n_rows": 5,
+  "errors": {
+    "invalid JSON": 1
+  },
+  "answering": {
+    "answer_rate": 0.8,
+    "jev_abstain_rate": 0.0,
+    "no_links_rate": 0.0,
+    "luna_no_rate": 0.0,
+    "error_rate": 0.2,
+    "complete_rate": 0.0,
+    "confident_mean": 0.71,
+    "answer_chars_mean": 1830.0
+  },
+  "contract": {
+    "json_valid_rate": 0.8,
+    "invalid_tag_rows": 0.0,
+    "uncited_answer_rows": 0.0,
+    "url_in_answer_rows": 0.0,
+    "search_talk_rows": 0.0,
+    "nonempty_when_no_rows": 0.0,
+    "missing_empty_rows": 0.0,
+    "next_queries_subject_first": 1.0
+  },
+  "grounding": {
+    "claim_tokens_per_answer": 25.0,
+    "ungrounded_token_rate": 0.03,
+    "answers_with_ungrounded": 0.5
+  },
+  "subject": {
+    "rows_judged": 2,
+    "names_subject": 1.0,
+    "subject_in_cited": 1.0
+  },
+  "evidence_use": {
+    "items_given_mean": 10.0,
+    "evidence_chars_mean": 18421.0,
+    "items_cited_mean": 4.5,
+    "domains_cited": 16
+  },
+  "timing_ms": {
+    "search": {
+      "p50": 1631.6,
+      "p95": 2004.7,
+      "mean": 1716.8
+    },
+    "jev": {
+      "p50": 0.0,
+      "p95": 0.0,
+      "mean": 0.0
+    },
+    "luna": {
+      "p50": 33310.6,
+      "p95": 40831.9,
+      "mean": 33391.8
+    },
+    "total": {
+      "p50": 35128.7,
+      "p95": 42371.7,
+      "mean": 35108.7
+    }
+  },
+  "luna_timing_ms_called": {
+    "p50": 31031.3,
+    "p95": 35527.8,
+    "mean": 31224.8
+  },
+  "tokens": {
+    "input_mean": 11153.0,
+    "output_mean": 3186.0
+  },
+  "cost_usd": {
+    "search": 0.005,
+    "jev": 0.0,
+    "luna": 0.0,
+    "total": 0.005,
+    "per_answer": 0.001
+  },
+  "by_facet": {
+    "commercial": {
+      "n": 3,
+      "answer_rate": 0.6667
+    },
+    "readout": {
+      "n": 2,
+      "answer_rate": 1.0
+    }
+  }
+}

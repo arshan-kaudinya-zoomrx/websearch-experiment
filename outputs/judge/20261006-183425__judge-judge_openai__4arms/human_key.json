@@ -1,0 +1,98 @@
+{
+  "q003": {
+    "A": "parallel-fast/batch",
+    "B": "perplexity-fast/batch",
+    "C": "perplexity-fast/batch + jev",
+    "D": "parallel-fast/batch + jev"
+  },
+  "q012": {
+    "A": "parallel-fast/batch + jev",
+    "B": "parallel-fast/batch",
+    "C": "perplexity-fast/batch + jev",
+    "D": "perplexity-fast/batch"
+  },
+  "q015": {
+    "A": "parallel-fast/batch",
+    "B": "perplexity-fast/batch + jev",
+    "C": "parallel-fast/batch + jev",
+    "D": "perplexity-fast/batch"
+  },
+  "q022": {
+    "A": "parallel-fast/batch",
+    "B": "perplexity-fast/batch",
+    "C": "parallel-fast/batch + jev",
+    "D": "perplexity-fast/batch + jev"
+  },
+  "q026": {
+    "A": "parallel-fast/batch + jev",
+    "B": "perplexity-fast/batch",
+    "C": "parallel-fast/batch",
+    "D": "perplexity-fast/batch + jev"
+  },
+  "q029": {
+    "A": "parallel-fast/batch + jev",
+    "B": "parallel-fast/batch",
+    "C": "perplexity-fast/batch + jev",
+    "D": "perplexity-fast/batch"
+  },
+  "q031": {
+    "A": "parallel-fast/batch",
+    "B": "perplexity-fast/batch + jev",
+    "C": "parallel-fast/batch + jev",
+    "D": "perplexity-fast/batch"
+  },
+  "q033": {
+    "A": "parallel-fast/batch",
+    "B": "perplexity-fast/batch + jev",
+    "C": "perplexity-fast/batch",
+    "D": "parallel-fast/batch + jev"
+  },
+  "q040": {
+    "A": "parallel-fast/batch + jev",
+    "B": "perplexity-fast/batch + jev",
+    "C": "perplexity-fast/batch",
+    "D": "parallel-fast/batch"
+  },
+  "q044": {
+    "A": "parallel-fast/batch",
+    "B": "perplexity-fast/batch + jev",
+    "C": "parallel-fast/batch + jev",
+    "D": "perplexity-fast/batch"
+  },
+  "q045": {
+    "A": "parallel-fast/batch + jev",
+    "B": "perplexity-fast/batch + jev",
+    "C": "parallel-fast/batch",
+    "D": "perplexity-fast/batch"
+  },
+  "q053": {
+    "A": "parallel-fast/batch",
+    "B": "perplexity-fast/batch + jev",
+    "C": "perplexity-fast/batch",
+    "D": "parallel-fast/batch + jev"
+  },
+  "q056": {
+    "A": "parallel-fast/batch + jev",
+    "B": "perplexity-fast/batch + jev",
+    "C": "perplexity-fast/batch",
+    "D": "parallel-fast/batch"
+  },
+  "q060": {
+    "A": "perplexity-fast/batch",
+    "B": "parallel-fast/batch + jev",
+    "C": "parallel-fast/batch",
+    "D": "perplexity-fast/batch + jev"
+  },
+  "q061": {
+    "A": "perplexity-fast/batch",
+    "B": "parallel-fast/batch",
+    "C": "parallel-fast/batch + jev",
+    "D": "perplexity-fast/batch + jev"
+  },
+  "q062": {
+    "A": "perplexity-fast/batch + jev",
+    "B": "parallel-fast/batch + jev",
+    "C": "perplexity-fast/batch",
+    "D": "parallel-fast/batch"
+  }
+}

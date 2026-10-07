@@ -62,8 +62,8 @@ class Provider(ABC):
             raise SystemExit(f"{self.env_key} is not set. Add it to .env (see .env.example).")
 
     @abstractmethod
-    def build_request(self, query: str | list[str]) -> tuple[str, dict, dict]:
-        """Return (url, headers, json_body)."""
+    def build_request(self, query: str | list[str], objective: str | None = None) -> tuple[str, dict, dict]:
+        """Return (url, headers, json_body). `objective` is the row's objective; providers may ignore it."""
 
     @abstractmethod
     def parse_results(self, data: Any) -> list[dict]:
@@ -79,12 +79,13 @@ class Provider(ABC):
             per_1k = per_1k.get(self.price_key(), per_1k.get("default", 0))
         return float(per_1k) / 1000.0
 
-    def public_request(self, query: str | list[str]) -> dict:
+    def public_request(self, query: str | list[str], objective: str | None = None) -> dict:
         """Request body as saved to disk (never includes credentials)."""
-        return self.build_request(query)[2]
+        return self.build_request(query, objective)[2]
 
-    async def search(self, client: httpx.AsyncClient, query: str | list[str]) -> SearchResponse:
-        url, headers, body = self.build_request(query)
+    async def search(self, client: httpx.AsyncClient, query: str | list[str],
+                     objective: str | None = None) -> SearchResponse:
+        url, headers, body = self.build_request(query, objective)
         t0 = time.perf_counter()
         try:
             resp = await client.post(url, headers=headers, json=body, timeout=self.timeout_s)

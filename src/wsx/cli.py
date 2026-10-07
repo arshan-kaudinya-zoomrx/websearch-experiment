@@ -9,7 +9,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from . import FILTERS_DIR, ROOT, RUNS_DIR
+from . import FILTERS_DIR, JUDGE_DIR, ROOT, RUNS_DIR, SYNTH_DIR
 
 
 def _run_dir(value: str, base: Path = RUNS_DIR) -> Path:
@@ -36,6 +36,22 @@ def _resolve_runs(values: list[str], base: Path = RUNS_DIR) -> list[Path]:
             out.append(runs[-1])
         else:
             out.append(_run_dir(v, base))
+    return out
+
+
+def _source_dirs(values: list[str]) -> list[Path]:
+    """Search runs or Jev filter folders, by path, name prefix or substring (prefix wins)."""
+    out = []
+    for v in values:
+        if Path(v).is_dir():
+            out.append(Path(v))
+            continue
+        dirs = [d for base in (FILTERS_DIR, RUNS_DIR) if base.exists() for d in base.iterdir() if d.is_dir()]
+        matches = [d for d in dirs if d.name.startswith(v)] or [d for d in dirs if v in d.name]
+        if len(matches) != 1:
+            raise SystemExit(f"'{v}' matches {len(matches)} run/filter folders" +
+                             (":\n  " + "\n  ".join(m.name for m in matches) if matches else ""))
+        out.append(matches[0])
     return out
 
 
@@ -75,7 +91,7 @@ def cmd_run(args) -> None:
             "config": cfg,
             "rows": len(p["rows"]), "cases": len(p["cases"]), "requests": p["n_requests"],
             "est_cost_usd": p["est_cost_usd"],
-            "example_request": p["provider"].public_request(example["query"]) if example else None,
+            "example_request": p["provider"].public_request(example["query"], example["objective"]) if example else None,
         }, indent=2, ensure_ascii=False))
         return
     execute(cfg)
@@ -157,6 +173,61 @@ def cmd_rescore(args) -> None:
     from .filtering import rescore
     for d in _resolve_runs(args.filters, FILTERS_DIR):
         rescore(d, args.set)
+
+
+def cmd_synth(args) -> None:
+    from .luna import build_luna_config, plan_synth, run_synth
+    cfg = build_luna_config(args.config, args.set)
+    sources = _source_dirs(args.sources)
+    if args.dry_run:
+        total = 0.0
+        for d in sources:
+            p = plan_synth(d, cfg, args.rows)
+            total += p["est_cost_usd"]
+            print(f"  {p['source']['arm']:<34} {d.name}\n    {p['n_rows']} rows, {p['n_calls']} Luna calls "
+                  f"({p['n_rows'] - p['n_calls']} skipped: Jev abstain / no links / source error), ~{p['est_input_tokens']:,} input tokens, "
+                  f"est ${p['est_cost_usd']}")
+        facets = plan_synth(sources[0], cfg, args.rows)["facets"]
+        print("Facet per row (prompt COLUMN CONTRACT; fix in data/facet_overrides.yaml):")
+        by: dict[str, list[str]] = {}
+        for row_id, f in facets.items():
+            by.setdefault(f, []).append(row_id)
+        for f, ids in sorted(by.items()):
+            print(f"  {f:<18} {len(ids):>2}  {' '.join(ids)}")
+        print(f"Synth model={cfg['llm']['model']}: {len(sources)} arm(s), est ${round(total, 4)} "
+              f"(0 if llm.pricing is unset). No calls made (dry run).")
+        return
+    for d in sources:
+        run_synth(d, cfg, args.rows)
+
+
+def cmd_synth_retry(args) -> None:
+    from .luna import retry_failed
+    for d in _resolve_runs(args.synths, SYNTH_DIR):
+        if not retry_failed(d, args.set):
+            print(f"{d.name}: no failed rows")
+
+
+def cmd_judge(args) -> None:
+    from .judge import build_judge_config, plan_judge, run_judge
+    cfg = build_judge_config(args.config, args.set)
+    synths = _resolve_runs(args.synths, SYNTH_DIR)
+    if args.dry_run:
+        p = plan_judge(synths, cfg, args.rows)
+        print(f"Judge model={cfg['llm']['model']}: arms {p['arm_names']}\n  {len(p['items'])} rows, "
+              f"{p['n_calls']} calls, ~{p['est_input_tokens']:,} input tokens, est ${p['est_cost_usd']}. "
+              f"No calls made (dry run).")
+        if p["skipped"]:
+            print(f"  not judged (an arm errored on the row): {p['skipped']}")
+        return
+    run_judge(synths, cfg, args.rows)
+
+
+def cmd_judge_score(args) -> None:
+    from .judge import summarize_judge_dir
+    for d in _resolve_runs(args.judges, JUDGE_DIR):
+        summarize_judge_dir(d)
+        print((d / "compare.md").read_text(encoding="utf-8"))
 
 
 def cmd_summarize(args) -> None:
@@ -250,6 +321,31 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--set", action="append", default=[], metavar="KEY=VALUE",
                    help="e.g. --set select.keep_threshold=0.7 --set select.max_keep=3")
     p.set_defaults(func=cmd_rescore)
+
+    p = sub.add_parser("synth", help="Luna answers (data/prompts.py) from saved links -> outputs/synth/")
+    p.add_argument("sources", nargs="+", help="search run or Jev filter folder(s): path, name prefix or substring")
+    p.add_argument("-c", "--config", default="luna_openai", help="Luna config (default: luna_openai)")
+    p.add_argument("--set", action="append", default=[], metavar="KEY=VALUE", help="e.g. --set llm.model=<name>")
+    p.add_argument("--rows", help='only these rows: "1-5", "q003,q017"')
+    p.add_argument("--dry-run", action="store_true", help="show calls, tokens, cost and the facet table; call nothing")
+    p.set_defaults(func=cmd_synth)
+
+    p = sub.add_parser("synth-retry", help="re-run the failed Luna rows (429, timeout, invalid JSON) into the same synth folder")
+    p.add_argument("synths", nargs="+", help="synth folder(s) in outputs/synth, substring, or 'latest'")
+    p.add_argument("--set", action="append", default=[], metavar="KEY=VALUE", help="e.g. --set run.concurrency=2")
+    p.set_defaults(func=cmd_synth_retry)
+
+    p = sub.add_parser("judge", help="blind LLM judge across Luna arms -> outputs/judge/ (+ human_review.csv)")
+    p.add_argument("synths", nargs="+", help="2-4 synth folders in outputs/synth (substring ok)")
+    p.add_argument("-c", "--config", default="judge_openai", help="judge config (default: judge_openai)")
+    p.add_argument("--set", action="append", default=[], metavar="KEY=VALUE")
+    p.add_argument("--rows", help='only these rows: "1-5", "q003,q017"')
+    p.add_argument("--dry-run", action="store_true")
+    p.set_defaults(func=cmd_judge)
+
+    p = sub.add_parser("judge-score", help="recompute a judge folder's summary (+ human agreement once human_review.csv is filled)")
+    p.add_argument("judges", nargs="+", help="judge folder(s) in outputs/judge, substring, or 'latest'")
+    p.set_defaults(func=cmd_judge_score)
 
     p = sub.add_parser("summarize", help="recompute summary.json for run(s)")
     p.add_argument("runs", nargs="+", help="run folder, name substring, or 'latest'")

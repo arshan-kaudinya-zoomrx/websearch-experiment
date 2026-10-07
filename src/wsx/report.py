@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import json
 
-from . import FILTERS_DIR, OUTPUT_DIR, RUNS_DIR
+from . import FILTERS_DIR, JUDGE_DIR, OUTPUT_DIR, RUNS_DIR, SYNTH_DIR
 
 COLS = [
     ("run", lambda s: f"`{s['run_id']}`"),
     ("mode", lambda s: s["mode"]),
-    ("type", lambda s: s["params"].get("search_type", "-")),
+    ("provider", lambda s: s.get("provider", "-")),
+    ("type", lambda s: s["params"].get("search_type") or s["params"].get("mode") or "-"),
     ("n", lambda s: s["n_requests"]),
     ("p50 ms", lambda s: s["latency_ms"]["p50"]),
     ("p95 ms", lambda s: s["latency_ms"]["p95"]),
@@ -51,6 +52,24 @@ FILTER_COLS = [
     ("cost $", lambda s: s["cost_usd"]),
 ]
 
+SYNTH_COLS = [
+    ("synth", lambda s: f"`{s['synth_id']}`"),
+    ("arm", lambda s: s["arm"]),
+    ("model", lambda s: s["model"]),
+    ("n", lambda s: s["n_rows"]),
+    ("answered", lambda s: f"{s['answering']['answer_rate']:.0%}"),
+    ("jev abstain", lambda s: f"{s['answering']['jev_abstain_rate']:.0%}"),
+    ("complete", lambda s: f"{s['answering']['complete_rate']:.0%}"),
+    ("ungrounded tok", lambda s: f"{s['grounding']['ungrounded_token_rate']:.1%}"),
+    ("search-talk", lambda s: f"{s['contract']['search_talk_rows']:.0%}"),
+    ("items", lambda s: s["evidence_use"]["items_given_mean"]),
+    ("cited", lambda s: s["evidence_use"]["items_cited_mean"]),
+    ("luna p50", lambda s: s["luna_timing_ms_called"]["p50"]),
+    ("total p50", lambda s: s["timing_ms"]["total"]["p50"]),
+    ("total p95", lambda s: s["timing_ms"]["total"]["p95"]),
+    ("$ / answer", lambda s: s["cost_usd"]["per_answer"]),
+]
+
 
 def build_report() -> tuple[str, list[dict]]:
     summaries = []
@@ -68,12 +87,25 @@ def build_report() -> tuple[str, list[dict]]:
                   "| " + " | ".join(c for c, _ in FILTER_COLS) + " |", "|" + "---|" * len(FILTER_COLS)]
         for s in filters:
             lines.append("| " + " | ".join(str(fn(s)) for _, fn in FILTER_COLS) + " |")
-    md ="\n".join(lines) + "\n"
+    synths = [json.loads(p.read_text(encoding="utf-8")) for p in sorted(SYNTH_DIR.glob("*/summary.json"))]
+    if synths:
+        lines += ["", "## Luna answers", "",
+                  "Code-only answer metrics per arm (docs/METHODOLOGY.md, \"Luna answers\"). Judge results: "
+                  "outputs/judge/*/compare.md.", "",
+                  "| " + " | ".join(c for c, _ in SYNTH_COLS) + " |", "|" + "---|" * len(SYNTH_COLS)]
+        for s in synths:
+            lines.append("| " + " | ".join(str(fn(s)) for _, fn in SYNTH_COLS) + " |")
+    judges = sorted(JUDGE_DIR.glob("*/compare.md"))
+    if judges:
+        lines += ["", "## Judge comparisons", ""] + [f"- `{p.parent.name}`: {p.relative_to(OUTPUT_DIR).as_posix()}"
+                                                    for p in judges]
+    md = "\n".join(lines) + "\n"
     OUTPUT_DIR.mkdir(exist_ok=True)
     (OUTPUT_DIR / "report.md").write_text(md, encoding="utf-8")
     compact = {
         "runs": [{"run_id": s["run_id"], **{c: fn(s) for c, fn in COLS[1:]}} for s in summaries],
         "filters": [{"filter_id": s["filter_id"], **{c: fn(s) for c, fn in FILTER_COLS[1:]}} for s in filters],
+        "synth": [{"synth_id": s["synth_id"], **{c: fn(s) for c, fn in SYNTH_COLS[1:]}} for s in synths],
     }
     (OUTPUT_DIR / "report.json").write_text(json.dumps(compact, indent=2, ensure_ascii=False), encoding="utf-8")
     return md, summaries
